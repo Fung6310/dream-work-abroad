@@ -1,0 +1,22 @@
+# Render Blueprint for the API only (apps/web and apps/admin deploy to Vercel
+# instead — see docs/DEPLOYMENT.md). In the Render dashboard: New + -> Blueprint
+# -> point at this repo -> Render reads this file automatically.
+services:
+  - type: web
+    name: dreamworkabroad-api
+    runtime: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install
+    startCommand: npm run start -w @dreamworkabroad/api
+    envVars:
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: WEB_ORIGIN
+        sync: false
+      - key: ADMIN_ORIGIN
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+    # Render injects PORT automatically for web services — server.ts already
+    # reads process.env.PORT, so nothing to set here.
