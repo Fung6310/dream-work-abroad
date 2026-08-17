@@ -33,22 +33,45 @@ checking that site's terms.
 `packages/shared/src/types.ts` is the source of truth. The core entity is
 `Scholarship` — unlike deal-aggregator's static `Product`/`Offer` catalogue,
 scholarships are **mutable** (admin CRUD, plus the pending → published/
-rejected workflow), so they live in a JSON-file-backed store
-(`apps/api/data.scholarships.json`, gitignored) seeded once from
+rejected workflow), so they live in `apps/api/src/store/`, seeded once from
 `data/seed.ts` on first boot, rather than being read straight from the seed
 module on every request. `ApplyClickEvent` and `PremiumLead` are pure
 append-only logs, same shape/role as deal-aggregator's `ClickEvent`.
+
+**Storage backend**: `store/index.ts` picks between two implementations of
+the same `Store` interface (`store/types.ts`) based on whether `DATABASE_URL`
+is set — `store/pgStore.ts` (Postgres, hand-written SQL, no ORM) in
+production, `store/fileStore.ts` (JSON files on disk, gitignored) for local
+dev with zero setup. Every route imports from `../store` and never knows or
+cares which one is live. `pgStore.ts` creates its own tables and seeds them
+on first boot — no separate migration step.
+
+Two independent classification axes on `Scholarship`, easy to conflate but
+deliberately kept separate:
+
+- **`scope`** (`"malaysia" | "international"`) — who funds it: a Malaysian
+  body, or a foreign government/institution. Drives the `/malaysia` and
+  `/international` pages.
+- **`providerType`** (`government | university | private | foundation |
+  international`) — what kind of org it is. A Malaysian private university
+  and a foreign university are both `providerType: "university"` but
+  different `scope` — that distinction used to be conflated (Malaysian
+  private universities were mislabeled `providerType: "private"`, which
+  visually collided with actual private-company sponsors like Genting Group)
+  until the `scope` field was introduced specifically to carry the
+  Malaysia-vs-abroad distinction instead.
 
 ## 4. System design
 
 ```
 ScholarshipSourceAdapter(s)  →  POST /admin/ingest/mock-scrape  →  pending queue
                                           │
-data/seed.ts  ──seeds once──▶  apps/api/store.ts (JSON files)  ◀──CRUD── apps/admin
+data/seed.ts  ──seeds once──▶  apps/api/src/store (pg or file)  ◀──CRUD── apps/admin
                                           │
-                                   GET /api/scholarships
+                          GET /api/scholarships?scope=&level=&field=...
                                           │
-                                      apps/web  ──/api/go/:id──▶  official site
+                         apps/web  ──/api/go/:id──▶  official site
+              (/, /malaysia, /international, /match, /scholarship/:id)
 ```
 
 ## 5. Swapping mock scraping for a real source later
@@ -91,13 +114,30 @@ scraped candidate without a `POST /admin/scholarships/:id/approve` call behind
 
 ## 7. Tech stack
 
-Node.js + TypeScript + Express API with JSON-file persistence (swap for
-Postgres in production — the `Scholarship`/`ApplyClickEvent`/`PremiumLead`
-shapes map 1:1 to tables). Next.js 14 (App Router) + Tailwind for both the
-public site and the admin back office, deployed as two separate apps/origins.
-A shared `@dreamworkabroad/shared` package (types + pure filter/sort/format
-helpers) with no build step, consumed via `transpilePackages` in both Next.js
-apps and directly via `tsx` in the API.
+Node.js + TypeScript + Express API, Postgres in production / JSON files in
+dev (§3). Next.js 14 (App Router) + Tailwind for both the public site and the
+admin back office, deployed as two separate apps/origins — see
+docs/DEPLOYMENT.md for the Vercel + Render + hosted-Postgres setup. A shared
+`@dreamworkabroad/shared` package (types + pure filter/sort/format helpers)
+with no build step, consumed via `transpilePackages` in both Next.js apps and
+directly via `tsx` in the API.
+
+## 7a. Eligibility matcher ("Find My Scholarships", `/match`)
+
+A client-only profile form (`components/MatchExperience.tsx`) captures
+education level, an optional field of study, preferred scope(s) and a
+funding preference, persists it to `localStorage` so it survives a repeat
+visit, and re-queries `GET /api/scholarships` with those as real filters
+(`level`, `field`, `scope`, `fundingType` — the same query params
+`/malaysia`/`/international` use). This only narrows on **structured** data
+the catalogue actually has. It deliberately does not attempt to filter on
+citizenship, minimum CGPA, or other fine-print criteria, since those aren't
+structured per-scholarship fields (and inventing plausible-looking numbers
+would be worse than not filtering at all) — each result still surfaces its
+`eligibilitySummary` text so the student does the final check themselves.
+Extending this to hard-filter on more criteria later means adding those as
+real structured fields on `Scholarship` first (and populating them
+accurately per scholarship), not guessing.
 
 ## 8. Visual theme
 
@@ -139,10 +179,16 @@ goes anywhere near production data.
 ## 11. Roadmap after this prototype
 
 1. Pick one scraping source, verify its robots.txt/ToS, implement its adapter.
-2. Move the JSON-file stores to Postgres.
-3. Replace the shared admin password with real per-staff auth.
-4. Apply for Google AdSense once there's real traffic (docs/MONETIZATION.md).
-5. Build real Stripe billing for Premium, migrating `PremiumLead` records into
+2. Replace the shared admin password with real per-staff auth.
+3. Apply for Google AdSense once there's real traffic (docs/MONETIZATION.md).
+4. Build real Stripe billing for Premium, migrating `PremiumLead` records into
    subscribers.
-6. Deploy `apps/admin` to its own subdomain, behind extra network protection
+5. Deploy `apps/admin` to its own subdomain, behind extra network protection
    (VPN/IP allowlist) before it holds real applicant data.
+6. If the eligibility matcher (§7a) should filter on more than education
+   level/field/scope/funding, add real structured fields to `Scholarship`
+   (e.g. `minCgpa`, `citizenshipRequirement`) populated accurately per
+   scholarship — not inferred from free-text `eligibilitySummary`.
+
+Already done as of this doc: Postgres migration (§3), the Malaysia/International
+scope split (§3, §7a), the eligibility matcher (§7a).
