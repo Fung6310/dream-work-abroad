@@ -24,8 +24,6 @@ export interface FilterSidebarProps {
   countries: string[];
   selectedCountries: Record<string, boolean>;
   onToggleCountry: (country: string) => void;
-  featuredOnly: boolean;
-  onToggleFeaturedOnly: () => void;
   deadlineSoonOnly: boolean;
   onToggleDeadlineSoonOnly: () => void;
   onReset: () => void;
@@ -72,8 +70,6 @@ export default function FilterSidebar({
   countries,
   selectedCountries,
   onToggleCountry,
-  featuredOnly,
-  onToggleFeaturedOnly,
   deadlineSoonOnly,
   onToggleDeadlineSoonOnly,
   onReset,
@@ -91,7 +87,6 @@ export default function FilterSidebar({
       </div>
 
       <Section title="Show">
-        <Checkbox checked={featuredOnly} onChange={onToggleFeaturedOnly} label="Featured only" />
         <Checkbox checked={deadlineSoonOnly} onChange={onToggleDeadlineSoonOnly} label="Deadline within 30 days" />
       </Section>
 

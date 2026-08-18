@@ -36,12 +36,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="hover:text-primary dark:hover:text-primary2">
                 Search
               </Link>
-              <Link href="/malaysia" className="hover:text-primary dark:hover:text-primary2">
-                Malaysia
-              </Link>
-              <Link href="/international" className="hover:text-primary dark:hover:text-primary2">
-                International
-              </Link>
               <Link href="/match" className="hover:text-primary dark:hover:text-primary2">
                 Find My Scholarships
               </Link>

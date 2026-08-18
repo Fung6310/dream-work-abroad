@@ -7,7 +7,6 @@ import {
   FundingType,
   FUNDING_TYPES,
   isDeadlineSoon,
-  isFeaturedActive,
   ProviderType,
   PROVIDER_TYPES,
   Scholarship,
@@ -28,10 +27,12 @@ function allFalse<T extends string>(keys: T[]): Record<T, boolean> {
 
 // Facet filtering happens entirely client-side over the already-fetched
 // result set (no extra network round-trip per checkbox) — the server only
-// handles the initial text query (and, on /malaysia and /international, the
-// scope). Same pattern as deal-aggregator's SearchResults.tsx. The Scope
-// facet itself auto-hides when the fetched set is already single-scope (see
-// FilterSidebar) — same trick as the Destination section hiding for one country.
+// handles the initial text query. Same pattern as deal-aggregator's
+// SearchResults.tsx. The Scope facet auto-hides when the fetched set is
+// already single-scope (see FilterSidebar) — same trick as the Destination
+// section hiding for one country. No "Featured only" filter here — featured
+// scholarships already get their own strip above this on the home page, so
+// a duplicate filter for the same thing was redundant.
 //
 // Filters are opt-in, not opt-out: every checkbox starts unchecked and the
 // full result set shows. Checking a box narrows to that value; checking
@@ -50,7 +51,6 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
   const [providerTypes, setProviderTypes] = useState<Record<ProviderType, boolean>>(() => allFalse(ALL_PROVIDER_TYPES));
   const [fundingTypes, setFundingTypes] = useState<Record<FundingType, boolean>>(() => allFalse(ALL_FUNDING_TYPES));
   const [selectedCountries, setSelectedCountries] = useState<Record<string, boolean>>(() => allFalse(countries));
-  const [featuredOnly, setFeaturedOnly] = useState(false);
   const [deadlineSoonOnly, setDeadlineSoonOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -68,11 +68,10 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
         (!anyProviderType || providerTypes[s.providerType]) &&
         (!anyFundingType || fundingTypes[s.fundingType]) &&
         (!anyCountry || selectedCountries[s.destinationCountry]) &&
-        (!featuredOnly || isFeaturedActive(s)) &&
         (!deadlineSoonOnly || isDeadlineSoon(s.deadline))
     );
     return sortFeaturedFirst(sortByDeadline(matches));
-  }, [scholarships, scopes, countries, selectedScopes, levels, providerTypes, fundingTypes, selectedCountries, featuredOnly, deadlineSoonOnly]);
+  }, [scholarships, scopes, countries, selectedScopes, levels, providerTypes, fundingTypes, selectedCountries, deadlineSoonOnly]);
 
   const activeCount =
     scopes.filter((sc) => selectedScopes[sc]).length +
@@ -80,7 +79,6 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
     ALL_PROVIDER_TYPES.filter((p) => providerTypes[p]).length +
     ALL_FUNDING_TYPES.filter((f) => fundingTypes[f]).length +
     countries.filter((c) => selectedCountries[c]).length +
-    (featuredOnly ? 1 : 0) +
     (deadlineSoonOnly ? 1 : 0);
 
   function reset() {
@@ -89,7 +87,6 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
     setProviderTypes(allFalse(ALL_PROVIDER_TYPES));
     setFundingTypes(allFalse(ALL_FUNDING_TYPES));
     setSelectedCountries(allFalse(countries));
-    setFeaturedOnly(false);
     setDeadlineSoonOnly(false);
   }
 
@@ -106,8 +103,6 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
     countries,
     selectedCountries,
     onToggleCountry: (c: string) => setSelectedCountries((s) => ({ ...s, [c]: !s[c] })),
-    featuredOnly,
-    onToggleFeaturedOnly: () => setFeaturedOnly((v) => !v),
     deadlineSoonOnly,
     onToggleDeadlineSoonOnly: () => setDeadlineSoonOnly((v) => !v),
     onReset: reset,

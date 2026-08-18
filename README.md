@@ -3,11 +3,10 @@
 Search once, compare government, GLC, university, foundation and
 international scholarships open to Malaysian students — education level,
 funding type, destination and deadline at a glance — and apply directly on
-the official provider's site. Browse everything on the home search, or use
-the dedicated **[/malaysia](http://localhost:3100/malaysia)** and
-**[/international](http://localhost:3100/international)** pages, or answer a
-few questions on **[/match](http://localhost:3100/match)** to only see
-scholarships that fit your education level, field and preferred region.
+the official provider's site. One home search with facet filters (including
+Malaysia vs. International — a `Scope` filter, not a separate page), plus
+**[/match](http://localhost:3100/match)** to answer a few questions and only
+see scholarships that fit your education level, field and preferred region.
 Scraped candidates go through a staff review queue before anything is
 published; nothing is ever auto-published from a scrape. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full design,
@@ -27,8 +26,9 @@ apps/
   api/      Node + TypeScript backend — search, scholarship detail, apply-click
             redirect, premium lead capture, admin CRUD + review queue + stats.
             store/ picks Postgres (DATABASE_URL set) or local JSON files (unset).
-  web/      Next.js customer-facing site — home search, /malaysia, /international,
-            /match (eligibility matcher), scholarship detail, /premium waitlist
+  web/      Next.js customer-facing site — home search (with a Scope filter for
+            Malaysia/International), /match (eligibility matcher), scholarship
+            detail, /premium waitlist, /partners (sponsor inquiries)
   admin/    Next.js back-office dashboard — a SEPARATE app/origin, not linked
             from the public site (see docs/ARCHITECTURE.md §9)
 packages/
@@ -67,15 +67,14 @@ project (4000/3000/3001), so both can run side by side.
 2. Open http://localhost:3101, log in, and the click shows up in the
    dashboard stats and 14-day chart.
 
-## Try the Malaysia / International split
+## Try the Malaysia / International scope filter
 
-- http://localhost:3100/malaysia — only scholarships funded by a Malaysian
-  government body, GLC, foundation or institution.
-- http://localhost:3100/international — only foreign-government/institution
-  scholarships for Malaysians to study abroad.
-- Each scholarship's `scope` is independent of `providerType` — e.g. a
-  Malaysian private university and a foreign university are both
-  `providerType: "university"` but different `scope`.
+On http://localhost:3100, open the filter sidebar (mobile: tap **Filters**)
+and check **Scope → Malaysia** or **International** — no separate page for
+this, one facet like any other filter. Each scholarship's `scope` is
+independent of `providerType` — e.g. a Malaysian private university and a
+foreign university are both `providerType: "university"` but different
+`scope`.
 
 ## Try the eligibility matcher
 

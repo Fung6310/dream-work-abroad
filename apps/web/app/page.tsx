@@ -41,35 +41,16 @@ export default async function HomePage({
       </section>
 
       {!q && (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Link
-            href="/malaysia"
-            className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-5 hover:border-primary dark:hover:border-primary2 transition-colors"
-          >
-            <p className="font-semibold text-text dark:text-text2">🇲🇾 Malaysia scholarships</p>
-            <p className="mt-1 text-sm text-textMuted dark:text-textMuted2">
-              Government, GLC, foundation and private-university funding — some let you study overseas too.
-            </p>
-          </Link>
-          <Link
-            href="/international"
-            className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-5 hover:border-primary dark:hover:border-primary2 transition-colors"
-          >
-            <p className="font-semibold text-text dark:text-text2">🌍 International scholarships</p>
-            <p className="mt-1 text-sm text-textMuted dark:text-textMuted2">
-              Foreign governments and institutions funding Malaysians to study abroad.
-            </p>
-          </Link>
-          <Link
-            href="/match"
-            className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-5 hover:border-primary dark:hover:border-primary2 transition-colors"
-          >
-            <p className="font-semibold text-text dark:text-text2">🎯 Find my scholarships</p>
-            <p className="mt-1 text-sm text-textMuted dark:text-textMuted2">
-              Enter your education level and field once — only see scholarships you actually qualify for.
-            </p>
-          </Link>
-        </section>
+        <Link
+          href="/match"
+          className="flex flex-col items-center gap-1 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-5 text-center hover:border-primary dark:hover:border-primary2 transition-colors"
+        >
+          <p className="font-semibold text-text dark:text-text2">🎯 Find my scholarships</p>
+          <p className="text-sm text-textMuted dark:text-textMuted2">
+            Enter your education level and field once — only see scholarships you actually qualify for. Or use the
+            filters below to narrow by Malaysia/International, level, funding and more.
+          </p>
+        </Link>
       )}
 
       {!q && <FeaturedStrip scholarships={scholarships} />}

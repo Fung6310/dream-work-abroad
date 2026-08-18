@@ -50,8 +50,10 @@ Two independent classification axes on `Scholarship`, easy to conflate but
 deliberately kept separate:
 
 - **`scope`** (`"malaysia" | "international"`) — who funds it: a Malaysian
-  body, or a foreign government/institution. Drives the `/malaysia` and
-  `/international` pages.
+  body, or a foreign government/institution. Drives the "Scope" facet in
+  `FilterSidebar` on the home search (there's no separate `/malaysia` or
+  `/international` page — that was tried and removed as redundant with the
+  filter, see §12).
 - **`providerType`** (`government | university | private | foundation |
   international`) — what kind of org it is. A Malaysian private university
   and a foreign university are both `providerType: "university"` but
@@ -71,7 +73,7 @@ data/seed.ts  ──seeds once──▶  apps/api/src/store (pg or file)  ◀─
                           GET /api/scholarships?scope=&level=&field=...
                                           │
                          apps/web  ──/api/go/:id──▶  official site
-              (/, /malaysia, /international, /match, /scholarship/:id)
+                    (/, /match, /scholarship/:id, /partners, /premium)
 ```
 
 ## 5. Swapping mock scraping for a real source later
@@ -128,8 +130,8 @@ A client-only profile form (`components/MatchExperience.tsx`) captures
 education level, an optional field of study, preferred scope(s) and a
 funding preference, persists it to `localStorage` so it survives a repeat
 visit, and re-queries `GET /api/scholarships` with those as real filters
-(`level`, `field`, `scope`, `fundingType` — the same query params
-`/malaysia`/`/international` use). This only narrows on **structured** data
+(`level`, `field`, `scope`, `fundingType` — the same query params the home
+search's Scope facet uses). This only narrows on **structured** data
 the catalogue actually has. It deliberately does not attempt to filter on
 citizenship, minimum CGPA, or other fine-print criteria, since those aren't
 structured per-scholarship fields (and inventing plausible-looking numbers
@@ -261,6 +263,26 @@ likely to want one. Fixed:
 `PremiumLead` gained `scholarshipId`, `scholarshipTitle`, `message` (all
 optional) to support this — same idempotent `ALTER TABLE` pattern as
 `application_timeline` (§3) for the Postgres backend.
+
+**Follow-up simplification pass** (same session, direct user feedback rather
+than a formal audit):
+
+- **Removed the `/malaysia` and `/international` pages.** They duplicated
+  the "Scope" facet already in `FilterSidebar` on the home search — two
+  routes doing one filter's job. `SearchBar`'s `basePath` prop and the
+  Scope-facet auto-hide logic in `FilterSidebar`/`SearchResults` (§ "Data
+  model") needed no changes; they were already written generically enough
+  that removing the dedicated routes was pure deletion, not a rewrite.
+- **Removed the "Featured only" filter checkbox.** Redundant with the
+  Featured Strip already showing every active-featured scholarship on the
+  home page — a filter that dupes a section a user can already see adds a
+  decision with no new information behind it.
+- **`FeaturedScholarshipCard`** replaces the plain `ScholarshipCard` inside
+  `FeaturedStrip` — a distinct accent-bordered layout (not a badge slapped on
+  the regular card) with an eligibility preview and a direct "Apply Now"
+  button (still routed through `/api/go/:id`, so clicks stay tracked) instead
+  of one more click through the detail page. The point: what a sponsor is
+  actually paying for should look like more than a small badge.
 
 ## 13. Roadmap after this prototype
 
