@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextFunction, Request, Response, Router } from "express";
+import { z } from "zod";
 import {
   AdminStats,
   isFeaturedActive,
@@ -26,23 +27,37 @@ const router = Router();
 // swap for real per-user auth before production — see docs/ARCHITECTURE.md §9.
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 const COOKIE_NAME = "dreamworkabroad_admin";
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 function expectedToken(): string {
   return crypto.createHash("sha256").update(`${ADMIN_PASSWORD}:dreamworkabroad-static-salt`).digest("hex");
 }
 
+// Constant-time comparison — `===` on secrets leaks timing information an
+// attacker can use to guess the value byte-by-byte. Low real-world risk at
+// this traffic scale, but free to fix (security-and-hardening skill).
+function safeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   const token = req.cookies?.[COOKIE_NAME];
-  if (token && token === expectedToken()) return next();
+  if (token && safeEqual(token, expectedToken())) return next();
   return res.status(401).json({ error: "Unauthorized" });
 }
 
 router.post("/admin/login", (req, res) => {
   const { password } = req.body ?? {};
-  if (password !== ADMIN_PASSWORD) return res.status(401).json({ error: "Invalid password" });
+  if (typeof password !== "string" || !safeEqual(password, ADMIN_PASSWORD)) {
+    return res.status(401).json({ error: "Invalid password" });
+  }
   res.cookie(COOKIE_NAME, expectedToken(), {
     httpOnly: true,
     sameSite: "lax",
+    secure: IS_PRODUCTION,
     maxAge: 1000 * 60 * 60 * 8,
   });
   res.json({ ok: true });
@@ -54,7 +69,8 @@ router.post("/admin/logout", (req, res) => {
 });
 
 router.get("/admin/session", (req, res) => {
-  res.json({ authenticated: req.cookies?.[COOKIE_NAME] === expectedToken() });
+  const token = req.cookies?.[COOKIE_NAME];
+  res.json({ authenticated: Boolean(token && safeEqual(token, expectedToken())) });
 });
 
 // --- stats ---------------------------------------------------------------
@@ -118,6 +134,52 @@ router.get("/admin/stats", requireAdmin, async (_req, res) => {
 
 // --- scholarship CRUD ------------------------------------------------------
 
+// Validated at this boundary rather than trusted from the client — an admin
+// session is trusted to *act*, not to send well-formed data (typos, a stale
+// admin UI build, or a direct API call could all send garbage otherwise).
+// PUT uses a whitelist (only these keys survive `safeParse`), which also
+// replaces the old blacklist-delete of id/createdAt/source — a client can no
+// longer inject those (or any other unexpected key) via the request body.
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const ScholarshipCoreSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  provider: z.string().trim().min(1).max(200),
+  providerType: z.enum(["government", "university", "private", "foundation", "international"]),
+  scope: z.enum(["malaysia", "international"]),
+  destinationCountry: z.string().trim().min(1).max(100),
+  educationLevel: z
+    .array(z.enum(["diploma", "undergraduate", "postgraduate", "phd", "professional"]))
+    .min(1),
+  fieldOfStudy: z.string().trim().min(1).max(200),
+  fundingType: z.enum(["full", "partial", "tuition-only", "living-allowance-only", "other"]),
+  deadline: z.string().regex(DATE_RE, "deadline must be YYYY-MM-DD"),
+  isRecurringAnnual: z.boolean(),
+  officialApplicationUrl: z.string().trim().url().max(500),
+  shortDescription: z.string().trim().max(2000),
+  eligibilitySummary: z.string().trim().max(2000),
+  applicationTimeline: z.string().trim().max(2000),
+  featured: z.boolean(),
+  featuredUntil: z.string().regex(DATE_RE).optional(),
+  status: z.enum(["pending", "published", "rejected", "expired"]),
+});
+
+const ScholarshipCreateSchema = ScholarshipCoreSchema.partial({
+  providerType: true,
+  scope: true,
+  destinationCountry: true,
+  educationLevel: true,
+  fieldOfStudy: true,
+  fundingType: true,
+  isRecurringAnnual: true,
+  shortDescription: true,
+  eligibilitySummary: true,
+  applicationTimeline: true,
+  featured: true,
+  status: true,
+});
+
+const ScholarshipUpdateSchema = ScholarshipCoreSchema.partial();
+
 router.get("/admin/scholarships", requireAdmin, async (req, res) => {
   const status = typeof req.query.status === "string" ? (req.query.status as ScholarshipStatus) : undefined;
   const all = await getAllScholarships();
@@ -134,10 +196,11 @@ function slugify(title: string): string {
 }
 
 router.post("/admin/scholarships", requireAdmin, async (req, res) => {
-  const body = req.body ?? {};
-  if (!body.title || !body.provider || !body.officialApplicationUrl || !body.deadline) {
-    return res.status(400).json({ error: "title, provider, deadline and officialApplicationUrl are required" });
+  const parsed = ScholarshipCreateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(422).json({ error: "Invalid input", details: parsed.error.flatten() });
   }
+  const body = parsed.data;
 
   const now = new Date().toISOString();
   const scholarship: Scholarship = {
@@ -147,15 +210,16 @@ router.post("/admin/scholarships", requireAdmin, async (req, res) => {
     providerType: body.providerType ?? "private",
     scope: body.scope ?? "malaysia",
     destinationCountry: body.destinationCountry ?? "Malaysia",
-    educationLevel: Array.isArray(body.educationLevel) ? body.educationLevel : ["undergraduate"],
+    educationLevel: body.educationLevel ?? ["undergraduate"],
     fieldOfStudy: body.fieldOfStudy ?? "Any",
     fundingType: body.fundingType ?? "partial",
     deadline: body.deadline,
-    isRecurringAnnual: Boolean(body.isRecurringAnnual),
+    isRecurringAnnual: body.isRecurringAnnual ?? false,
     officialApplicationUrl: body.officialApplicationUrl,
     shortDescription: body.shortDescription ?? "",
     eligibilitySummary: body.eligibilitySummary ?? "",
-    featured: Boolean(body.featured),
+    applicationTimeline: body.applicationTimeline ?? "",
+    featured: body.featured ?? false,
     featuredUntil: body.featuredUntil || undefined,
     status: body.status ?? "published",
     source: "manual",
@@ -171,12 +235,12 @@ router.put("/admin/scholarships/:id", requireAdmin, async (req, res) => {
   const existing = await getScholarshipById(req.params.id);
   if (!existing) return res.status(404).json({ error: "Scholarship not found" });
 
-  const patch = { ...req.body };
-  delete patch.id;
-  delete patch.createdAt;
-  delete patch.source;
+  const parsed = ScholarshipUpdateSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(422).json({ error: "Invalid input", details: parsed.error.flatten() });
+  }
 
-  const updated = await updateScholarship(req.params.id, patch);
+  const updated = await updateScholarship(req.params.id, parsed.data);
   res.json(updated);
 });
 
@@ -233,6 +297,7 @@ router.post("/admin/ingest/mock-scrape", requireAdmin, async (_req, res) => {
         officialApplicationUrl: candidate.officialApplicationUrl,
         shortDescription: candidate.shortDescription,
         eligibilitySummary: candidate.eligibilitySummary ?? "",
+        applicationTimeline: candidate.applicationTimeline ?? "",
         featured: false,
         status: "pending",
         source: "scraped",

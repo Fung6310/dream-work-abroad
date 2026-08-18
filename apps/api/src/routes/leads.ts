@@ -1,28 +1,31 @@
 import crypto from "crypto";
 import { Router } from "express";
-import { EDUCATION_LEVELS, EducationLevel } from "@dreamworkabroad/shared";
+import { z } from "zod";
 import { addLead } from "../store";
 
 const router = Router();
 
-function isEducationLevel(value: unknown): value is EducationLevel {
-  return typeof value === "string" && value in EDUCATION_LEVELS;
-}
+const LeadSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(254),
+  name: z.string().trim().min(1).max(200).optional(),
+  interestLevel: z.enum(["diploma", "undergraduate", "postgraduate", "phd", "professional"]).optional(),
+});
 
 // POST /api/premium/leads — the entire "premium" build for now: capture
 // interest so the waitlist is real and visible in admin, no billing wired up
 // yet (see docs/MONETIZATION.md for the Stripe roadmap).
 router.post("/premium/leads", async (req, res) => {
-  const { email, name, interestLevel } = req.body ?? {};
-  if (typeof email !== "string" || !email.includes("@")) {
-    return res.status(400).json({ error: "A valid email is required" });
+  const parsed = LeadSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(422).json({ error: "A valid email is required", details: parsed.error.flatten() });
   }
+  const { email, name, interestLevel } = parsed.data;
 
   await addLead({
     id: crypto.randomUUID(),
     email,
-    name: typeof name === "string" && name ? name : undefined,
-    interestLevel: isEducationLevel(interestLevel) ? interestLevel : undefined,
+    name,
+    interestLevel,
     timestamp: new Date().toISOString(),
   });
 

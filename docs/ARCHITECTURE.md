@@ -176,7 +176,60 @@ goes anywhere near production data.
   `PremiumLead`, visible in Admin → Leads). No Stripe integration yet — see
   docs/MONETIZATION.md for that roadmap.
 
-## 11. Roadmap after this prototype
+## 11. Security & reliability hardening (skill-guided review)
+
+Reviewed against the `security-and-hardening` skill from
+[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)
+(installed into `~/.claude/skills/`). Fixed:
+
+- **Async errors could crash or hang the API.** Express 4 doesn't forward a
+  rejected promise from an `async` route handler to error-handling middleware
+  — a failed Postgres query (or any thrown error) would either hang the
+  request or crash the process. Fixed with `express-async-errors` (patches
+  Express's router once, at the top of `server.ts`) plus a catch-all error
+  handler that returns a generic 500 instead of leaking internals.
+- **No security headers** — added `helmet()`, with `crossOriginResourcePolicy: { policy: "cross-origin" }` explicitly overridden — helmet's default (`same-origin`) blocks the browser from reading the response on a cross-origin request even when CORS allows it, which would break every call from `apps/web`/`apps/admin` given they're deliberately separate origins from this API (§9). Caught by actually logging into the admin app after adding helmet, not just by reading helmet's docs — the CORS allowlist below is what's meant to restrict callers here, not CORP.
+- **Admin login was brute-forceable** — the shared `ADMIN_PASSWORD` had no
+  rate limit. Added `express-rate-limit`: 10 attempts/15min on
+  `/api/admin/login`, 300 req/15min on `/api` generally.
+- **Timing-unsafe password/token comparison** — `===` on secrets leaks
+  timing information; swapped for `crypto.timingSafeEqual` (`safeEqual()` in
+  `routes/admin.ts`).
+- **Admin session cookie missing `secure`** — now `secure: true` in
+  production (Render/Vercel are HTTPS-only; local dev stays HTTP so it's
+  conditional on `NODE_ENV`).
+- **Admin write endpoints trusted client input structurally** —
+  `POST`/`PUT /admin/scholarships` now validate with `zod` against the real
+  enum values (`providerType`, `scope`, `fundingType`, `status`,
+  `educationLevel`) and field constraints (URL format, date format, length
+  caps), returning `422` with details on failure. The `PUT` handler also
+  switched from *blacklisting* `id`/`createdAt`/`source` off the body to
+  *whitelisting* only the validated fields — a client can no longer inject
+  arbitrary extra keys.
+- **Premium lead email validation was a bare `.includes("@")`** — now a real
+  `zod` email schema.
+- **Zero tests anywhere** — added `vitest` to `packages/shared` with a real
+  suite for the pure filter/sort logic in `compare.ts` (17 tests: query
+  matching, deadline math, the full `matchesFilters` matrix, sort ordering).
+  Run via `npm test`. Not yet covering `apps/api`/`apps/web` — see roadmap.
+
+**Deferred, with reasons** (checked against the skill's audit-triage
+guidance, not skipped silently):
+- `npm audit` shows a new moderate advisory in `vitest`'s `esbuild`/`vite`
+  chain — it's a dev-server request-forgery issue, reachable only against a
+  *running* dev server, and this project only runs `vitest run` (one-shot),
+  never `vitest watch`'s dev server. Dev-only dependency, not shipped to
+  production. Fixing requires a Vitest 4.x major bump — deferred rather than
+  forced, per "never apply forced audit remediation automatically."
+- The pre-existing Next.js 14.2.5 / postcss high-severity advisories (flagged
+  earlier, inherited from the pinned Next.js version) are unchanged by this
+  pass — still tracked, still needs a Next.js major-version upgrade before
+  real production traffic.
+- Admin auth is still a single shared password (now rate-limited and
+  timing-safe, but still not per-staff auth) — real auth (NextAuth/Clerk) is
+  still §9's stated pre-production requirement, unchanged by this pass.
+
+## 12. Roadmap after this prototype
 
 1. Pick one scraping source, verify its robots.txt/ToS, implement its adapter.
 2. Replace the shared admin password with real per-staff auth.
@@ -189,6 +242,9 @@ goes anywhere near production data.
    level/field/scope/funding, add real structured fields to `Scholarship`
    (e.g. `minCgpa`, `citizenshipRequirement`) populated accurately per
    scholarship — not inferred from free-text `eligibilitySummary`.
+7. Extend test coverage beyond `packages/shared` (§11) into `apps/api` route
+   tests (supertest) and `apps/web` component tests.
+8. Upgrade Next.js past 14.2.5 to clear the pre-existing advisories (§11).
 
 Already done as of this doc: Postgres migration (§3), the Malaysia/International
 scope split (§3, §7a), the eligibility matcher (§7a).

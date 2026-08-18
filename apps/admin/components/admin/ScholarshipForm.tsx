@@ -28,6 +28,7 @@ export interface ScholarshipFormValues {
   officialApplicationUrl: string;
   shortDescription: string;
   eligibilitySummary: string;
+  applicationTimeline: string;
   featured: boolean;
   featuredUntil: string;
   status: ScholarshipStatus;
@@ -48,6 +49,7 @@ function toFormValues(s?: Scholarship): ScholarshipFormValues {
     officialApplicationUrl: s?.officialApplicationUrl ?? "",
     shortDescription: s?.shortDescription ?? "",
     eligibilitySummary: s?.eligibilitySummary ?? "",
+    applicationTimeline: s?.applicationTimeline ?? "",
     featured: s?.featured ?? false,
     featuredUntil: s?.featuredUntil ?? "",
     status: s?.status ?? "published",
@@ -235,11 +237,23 @@ export default function ScholarshipForm({
       </div>
 
       <div>
-        <label className={labelClass}>Eligibility summary</label>
+        <label className={labelClass}>General entry requirements</label>
         <textarea
           rows={2}
           value={values.eligibilitySummary}
           onChange={(e) => set("eligibilitySummary", e.target.value)}
+          placeholder="e.g. Malaysian citizen, minimum CGPA 3.5, subject to a service bond"
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>Application timeline</label>
+        <textarea
+          rows={2}
+          value={values.applicationTimeline}
+          onChange={(e) => set("applicationTimeline", e.target.value)}
+          placeholder="e.g. Applications open in August and close in early November; interviews run February-March, results in July"
           className={inputClass}
         />
       </div>

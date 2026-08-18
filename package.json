@@ -8,7 +8,8 @@
     "dev:web": "npm run dev -w @dreamworkabroad/web",
     "dev:admin": "npm run dev -w @dreamworkabroad/admin",
     "dev": "concurrently -n api,web,admin -c blue,green,magenta \"npm:dev:api\" \"npm:dev:web\" \"npm:dev:admin\"",
-    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w @dreamworkabroad/api && npm run typecheck -w @dreamworkabroad/web && npm run typecheck -w @dreamworkabroad/admin"
+    "typecheck": "npm run typecheck -w packages/shared && npm run typecheck -w @dreamworkabroad/api && npm run typecheck -w @dreamworkabroad/web && npm run typecheck -w @dreamworkabroad/admin",
+    "test": "npm run test -w packages/shared"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

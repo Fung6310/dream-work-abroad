@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS scholarships (
   official_application_url TEXT NOT NULL,
   short_description TEXT NOT NULL DEFAULT '',
   eligibility_summary TEXT NOT NULL DEFAULT '',
+  application_timeline TEXT NOT NULL DEFAULT '',
   featured BOOLEAN NOT NULL DEFAULT FALSE,
   featured_until TEXT,
   status TEXT NOT NULL,
@@ -64,6 +65,10 @@ CREATE TABLE IF NOT EXISTS premium_leads (
   interest_level TEXT,
   ts TEXT NOT NULL
 );
+-- Idempotent, covers a database that was created before this column existed
+-- (schema evolution without a separate migration tool at this scale — see
+-- docs/ARCHITECTURE.md §3).
+ALTER TABLE scholarships ADD COLUMN IF NOT EXISTS application_timeline TEXT NOT NULL DEFAULT '';
 `;
 
 function rowToScholarship(row: QueryResultRow): Scholarship {
@@ -82,6 +87,7 @@ function rowToScholarship(row: QueryResultRow): Scholarship {
     officialApplicationUrl: row.official_application_url,
     shortDescription: row.short_description,
     eligibilitySummary: row.eligibility_summary,
+    applicationTimeline: row.application_timeline,
     featured: row.featured,
     featuredUntil: row.featured_until ?? undefined,
     status: row.status,
@@ -96,9 +102,9 @@ async function insertScholarshipRow(s: Scholarship): Promise<void> {
     `INSERT INTO scholarships (
       id, title, provider, provider_type, scope, destination_country, education_level,
       field_of_study, funding_type, deadline, is_recurring_annual, official_application_url,
-      short_description, eligibility_summary, featured, featured_until, status, source,
+      short_description, eligibility_summary, application_timeline, featured, featured_until, status, source,
       created_at, updated_at
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)`,
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
     [
       s.id,
       s.title,
@@ -114,6 +120,7 @@ async function insertScholarshipRow(s: Scholarship): Promise<void> {
       s.officialApplicationUrl,
       s.shortDescription,
       s.eligibilitySummary,
+      s.applicationTimeline,
       s.featured,
       s.featuredUntil ?? null,
       s.status,
@@ -160,8 +167,8 @@ async function updateScholarship(
     `UPDATE scholarships SET
       title=$2, provider=$3, provider_type=$4, scope=$5, destination_country=$6, education_level=$7,
       field_of_study=$8, funding_type=$9, deadline=$10, is_recurring_annual=$11, official_application_url=$12,
-      short_description=$13, eligibility_summary=$14, featured=$15, featured_until=$16, status=$17, source=$18,
-      updated_at=$19
+      short_description=$13, eligibility_summary=$14, application_timeline=$15, featured=$16, featured_until=$17,
+      status=$18, source=$19, updated_at=$20
     WHERE id=$1`,
     [
       merged.id,
@@ -178,6 +185,7 @@ async function updateScholarship(
       merged.officialApplicationUrl,
       merged.shortDescription,
       merged.eligibilitySummary,
+      merged.applicationTimeline,
       merged.featured,
       merged.featuredUntil ?? null,
       merged.status,

@@ -8,6 +8,7 @@ import FeaturedBadge from "@/components/FeaturedBadge";
 import FundingTypeBadge from "@/components/FundingTypeBadge";
 import ProviderTypeBadge from "@/components/ProviderTypeBadge";
 import ScopeBadge from "@/components/ScopeBadge";
+import SubjectsSponsored from "@/components/SubjectsSponsored";
 import { getScholarship } from "@/lib/api";
 import { isFeaturedActive } from "@dreamworkabroad/shared";
 
@@ -52,18 +53,29 @@ export default async function ScholarshipPage({ params }: { params: { id: string
 
       <p className="text-text dark:text-text2">{scholarship.shortDescription}</p>
 
+      <SubjectsSponsored fieldOfStudy={scholarship.fieldOfStudy} />
+
       <div className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-4">
-        <h2 className="mb-2 font-semibold text-text dark:text-text2">Eligibility</h2>
+        <h2 className="mb-2 font-semibold text-text dark:text-text2">General Entry Requirements</h2>
         <p className="text-sm text-textMuted dark:text-textMuted2">
           {scholarship.eligibilitySummary || "See the official application page for full eligibility criteria."}
         </p>
       </div>
 
-      <div className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-4 text-sm text-textMuted dark:text-textMuted2">
-        <p>Field of study: {scholarship.fieldOfStudy}</p>
+      <div className="rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-4">
+        <h2 className="mb-2 font-semibold text-text dark:text-text2">Application Timeline</h2>
+        <p className="text-sm text-textMuted dark:text-textMuted2">
+          {scholarship.applicationTimeline ||
+            "Timeline not yet listed — check the deadline above and the official application page for the exact process and dates."}
+        </p>
         {scholarship.isRecurringAnnual && (
-          <p className="mt-1">This programme typically reopens around the same time each year.</p>
+          <p className="mt-2 text-xs text-textMuted dark:text-textMuted2">
+            This programme typically reopens on a similar cycle each year.
+          </p>
         )}
+        <p className="mt-2 text-xs text-textMuted dark:text-textMuted2">
+          General pattern only — always confirm exact dates on the official application page before you plan around them.
+        </p>
       </div>
 
       <div>

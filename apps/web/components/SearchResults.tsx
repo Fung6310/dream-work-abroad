@@ -22,8 +22,8 @@ const ALL_LEVELS = Object.keys(EDUCATION_LEVELS) as EducationLevel[];
 const ALL_PROVIDER_TYPES = Object.keys(PROVIDER_TYPES) as ProviderType[];
 const ALL_FUNDING_TYPES = Object.keys(FUNDING_TYPES) as FundingType[];
 
-function allTrue<T extends string>(keys: T[]): Record<T, boolean> {
-  return Object.fromEntries(keys.map((k) => [k, true])) as Record<T, boolean>;
+function allFalse<T extends string>(keys: T[]): Record<T, boolean> {
+  return Object.fromEntries(keys.map((k) => [k, false])) as Record<T, boolean>;
 }
 
 // Facet filtering happens entirely client-side over the already-fetched
@@ -32,6 +32,12 @@ function allTrue<T extends string>(keys: T[]): Record<T, boolean> {
 // scope). Same pattern as deal-aggregator's SearchResults.tsx. The Scope
 // facet itself auto-hides when the fetched set is already single-scope (see
 // FilterSidebar) — same trick as the Destination section hiding for one country.
+//
+// Filters are opt-in, not opt-out: every checkbox starts unchecked and the
+// full result set shows. Checking a box narrows to that value; checking
+// nothing in a facet applies no constraint from that facet at all (an empty
+// selection is never "match nothing"). FilterSidebar's checkbox UI doesn't
+// need to know about this — `checked` already means "selected" either way.
 export default function SearchResults({ scholarships, query }: { scholarships: Scholarship[]; query: string }) {
   const scopes = useMemo(() => Array.from(new Set(scholarships.map((s) => s.scope))) as Scope[], [scholarships]);
   const countries = useMemo(
@@ -39,44 +45,50 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
     [scholarships]
   );
 
-  const [selectedScopes, setSelectedScopes] = useState<Record<Scope, boolean>>(() => allTrue(scopes));
-  const [levels, setLevels] = useState<Record<EducationLevel, boolean>>(() => allTrue(ALL_LEVELS));
-  const [providerTypes, setProviderTypes] = useState<Record<ProviderType, boolean>>(() => allTrue(ALL_PROVIDER_TYPES));
-  const [fundingTypes, setFundingTypes] = useState<Record<FundingType, boolean>>(() => allTrue(ALL_FUNDING_TYPES));
-  const [selectedCountries, setSelectedCountries] = useState<Record<string, boolean>>(() => allTrue(countries));
+  const [selectedScopes, setSelectedScopes] = useState<Record<Scope, boolean>>(() => allFalse(scopes));
+  const [levels, setLevels] = useState<Record<EducationLevel, boolean>>(() => allFalse(ALL_LEVELS));
+  const [providerTypes, setProviderTypes] = useState<Record<ProviderType, boolean>>(() => allFalse(ALL_PROVIDER_TYPES));
+  const [fundingTypes, setFundingTypes] = useState<Record<FundingType, boolean>>(() => allFalse(ALL_FUNDING_TYPES));
+  const [selectedCountries, setSelectedCountries] = useState<Record<string, boolean>>(() => allFalse(countries));
   const [featuredOnly, setFeaturedOnly] = useState(false);
   const [deadlineSoonOnly, setDeadlineSoonOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
+    const anyScope = scopes.some((sc) => selectedScopes[sc]);
+    const anyLevel = ALL_LEVELS.some((l) => levels[l]);
+    const anyProviderType = ALL_PROVIDER_TYPES.some((p) => providerTypes[p]);
+    const anyFundingType = ALL_FUNDING_TYPES.some((f) => fundingTypes[f]);
+    const anyCountry = countries.some((c) => selectedCountries[c]);
+
     const matches = scholarships.filter(
       (s) =>
-        (selectedScopes[s.scope] ?? true) &&
-        s.educationLevel.some((l) => levels[l]) &&
-        providerTypes[s.providerType] &&
-        fundingTypes[s.fundingType] &&
-        (selectedCountries[s.destinationCountry] ?? true) &&
+        (!anyScope || selectedScopes[s.scope]) &&
+        (!anyLevel || s.educationLevel.some((l) => levels[l])) &&
+        (!anyProviderType || providerTypes[s.providerType]) &&
+        (!anyFundingType || fundingTypes[s.fundingType]) &&
+        (!anyCountry || selectedCountries[s.destinationCountry]) &&
         (!featuredOnly || isFeaturedActive(s)) &&
         (!deadlineSoonOnly || isDeadlineSoon(s.deadline))
     );
     return sortFeaturedFirst(sortByDeadline(matches));
-  }, [scholarships, selectedScopes, levels, providerTypes, fundingTypes, selectedCountries, featuredOnly, deadlineSoonOnly]);
+  }, [scholarships, scopes, countries, selectedScopes, levels, providerTypes, fundingTypes, selectedCountries, featuredOnly, deadlineSoonOnly]);
 
   const activeCount =
-    scopes.filter((sc) => !selectedScopes[sc]).length +
-    ALL_LEVELS.filter((l) => !levels[l]).length +
-    ALL_PROVIDER_TYPES.filter((p) => !providerTypes[p]).length +
-    ALL_FUNDING_TYPES.filter((f) => !fundingTypes[f]).length +
-    countries.filter((c) => !selectedCountries[c]).length +
+    scopes.filter((sc) => selectedScopes[sc]).length +
+    ALL_LEVELS.filter((l) => levels[l]).length +
+    ALL_PROVIDER_TYPES.filter((p) => providerTypes[p]).length +
+    ALL_FUNDING_TYPES.filter((f) => fundingTypes[f]).length +
+    countries.filter((c) => selectedCountries[c]).length +
     (featuredOnly ? 1 : 0) +
     (deadlineSoonOnly ? 1 : 0);
 
   function reset() {
-    setSelectedScopes(allTrue(scopes));
-    setLevels(allTrue(ALL_LEVELS));
-    setProviderTypes(allTrue(ALL_PROVIDER_TYPES));
-    setFundingTypes(allTrue(ALL_FUNDING_TYPES));
-    setSelectedCountries(allTrue(countries));
+    setSelectedScopes(allFalse(scopes));
+    setLevels(allFalse(ALL_LEVELS));
+    setProviderTypes(allFalse(ALL_PROVIDER_TYPES));
+    setFundingTypes(allFalse(ALL_FUNDING_TYPES));
+    setSelectedCountries(allFalse(countries));
     setFeaturedOnly(false);
     setDeadlineSoonOnly(false);
   }

@@ -57,7 +57,15 @@ export interface Scholarship {
   isRecurringAnnual?: boolean;
   officialApplicationUrl: string;
   shortDescription: string;
+  /** General entry requirements — citizenship, academic results, etc. Not exhaustive; always verify on the official site. */
   eligibilitySummary: string;
+  /**
+   * General shape of the application process — when it typically opens/closes,
+   * interview/results timing, intake. Deliberately prose, not structured dates:
+   * exact dates vary year to year and per-scholarship precision isn't known
+   * with confidence for all of them. Always verify exact dates on the official site.
+   */
+  applicationTimeline: string;
   featured: boolean;
   /** ISO date string — featured placement expires after this date. */
   featuredUntil?: string;
@@ -124,8 +132,9 @@ export interface ScrapedScholarshipCandidate {
   deadline: string;
   officialApplicationUrl: string;
   shortDescription: string;
-  /** Scraped candidates are often missing this — admin fills it in on review. */
+  /** Scraped candidates are often missing these — admin fills them in on review. */
   eligibilitySummary?: string;
+  applicationTimeline?: string;
 }
 
 export interface ScopeInfo {
