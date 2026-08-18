@@ -37,23 +37,24 @@ education loan companies).
 Taylor's, INTI, UCSI, Monash Malaysia, HELP, MMU) — they already pay for
 paid search ads and open-day booths, so a featured listing is a familiar ask.
 
-**Draft pitch blurb** (adapt as needed):
-
-> DreamWorkAbroad is a Malaysia-focused scholarship directory built to help
-> students find and compare funding options in one place. We're offering a
-> limited number of featured placements — your scholarship listing appears
-> at the top of relevant searches with a highlighted badge, for a flat fee
-> per [month/quarter]. Happy to share early traffic and click-through numbers.
+**This pitch is now live on the site, not just in this doc**: `/partners`
+(linked from every page's footer — "For scholarship providers — get
+featured") has the same pitch plus an inquiry form. Submissions land in
+Admin → Leads tagged "Partner inquiry" with the organization name and their
+message — check there first, not just your own outreach.
 
 **Suggested pricing structure**: a flat fee per `featuredUntil` window (e.g.
 RM 200–500/month for one featured slot, cheaper if pre-paying a quarter) is
 simplest to sell and administer while there's no self-serve billing yet.
-Adjust once you have real traffic numbers from Admin → Dashboard to point to.
+Adjust once you have real traffic numbers from Admin → Dashboard to point to
+— apply-click counts per scholarship (Admin → Dashboard → Top scholarships)
+are real usage data you can quote in a pitch.
 
 **How to actually mark something featured**: Admin → Scholarships → Edit →
 check "Featured" → set "Featured until" → Save. No payment processing is
-built for this yet, so today's workflow is: agree the deal → invoice manually
-→ toggle the flag → invoice again to renew before it lapses.
+built for this yet, so today's workflow is: agree the deal (via the
+`/partners` inquiry or your own outreach) → invoice manually → toggle the
+flag → invoice again to renew before it lapses.
 
 ## 3. Premium subscription (Stripe roadmap)
 

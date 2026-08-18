@@ -53,8 +53,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main className="mx-auto min-h-[calc(100vh-64px)] max-w-6xl px-4 py-8">{children}</main>
         <footer className="border-t border-border dark:border-border2 px-4 py-6 text-center text-xs text-textMuted dark:text-textMuted2">
-          DreamWorkAbroad is an information directory, not a scholarship provider — always apply on the
-          official provider&apos;s own site.
+          <p>
+            DreamWorkAbroad is an information directory, not a scholarship provider — always apply on the
+            official provider&apos;s own site.
+          </p>
+          <p className="mt-2">
+            <Link href="/partners" className="font-medium text-primary hover:underline dark:text-primary2">
+              For scholarship providers — get featured
+            </Link>
+          </p>
         </footer>
       </body>
     </html>

@@ -103,6 +103,11 @@ export interface PremiumLead {
   email: string;
   name?: string;
   interestLevel?: EducationLevel;
+  /** Set when captured from a scholarship's own "remind me" CTA rather than the general /premium page. */
+  scholarshipId?: string;
+  scholarshipTitle?: string;
+  /** Free text — e.g. a partner/provider inquiry submitted via /partners. */
+  message?: string;
   timestamp: string;
 }
 

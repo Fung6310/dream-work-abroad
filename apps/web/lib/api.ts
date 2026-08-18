@@ -50,6 +50,9 @@ export async function submitPremiumLead(payload: {
   email: string;
   name?: string;
   interestLevel?: EducationLevel;
+  scholarshipId?: string;
+  scholarshipTitle?: string;
+  message?: string;
 }): Promise<void> {
   const res = await fetch(`${API_BASE}/api/premium/leads`, {
     method: "POST",

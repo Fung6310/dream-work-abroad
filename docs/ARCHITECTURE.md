@@ -229,7 +229,40 @@ guidance, not skipped silently):
   timing-safe, but still not per-staff auth) — real auth (NextAuth/Clerk) is
   still §9's stated pre-production requirement, unchanged by this pass.
 
-## 12. Roadmap after this prototype
+## 12. Scholarship detail page — UX audit (skill-guided)
+
+Audited with the `ux-ui-audit` skill from
+[aditya-ariosity/ux-ui-skills](https://github.com/aditya-ariosity/ux-ui-skills)
+(installed into `~/.claude/skills/ux-ui-audit/`), against the complaint that
+detail pages felt empty and had no monetization surface. Diagnosis: the page
+wasn't broken, it was a dead end — every visit terminated at Apply Now or the
+ad placeholder with no path back into the site, no route into the one
+monetization lever that's actually functional (featured listings), and no
+lead capture at the exact moment (reading a future deadline) a reader is most
+likely to want one. Fixed:
+
+- **`DeadlineAlertCTA`** — inline reminder capture next to the deadline/Apply
+  block, not just on the standalone `/premium` page. Posts to the same
+  `PremiumLead` store, tagged with `scholarshipId`/`scholarshipTitle` so
+  demand per scholarship is visible in Admin → Leads instead of anonymous.
+- **`RelatedScholarships`** — 2–4 same-scope scholarships ranked by shared
+  education level / provider type / funding type (`pickRelated()` in the
+  detail page), using catalogue data already fetched, no new content.
+- **`/partners` page** — surfaces the featured-listing pitch (previously only
+  in docs/MONETIZATION.md) on the live site, linked from every page's footer,
+  with an inquiry form reusing the lead-capture endpoint (`message` field,
+  shown in Admin → Leads as "Partner inquiry").
+- **Destination-domain trust line** next to Apply Now (`chevening.org` etc.)
+  before the click, and a second `AdSlot` placement mid-content.
+- **Visual hierarchy**: deadline/Apply/reminder now sit in one accent-bordered
+  action block above the detail sections, instead of one undifferentiated
+  card per section.
+
+`PremiumLead` gained `scholarshipId`, `scholarshipTitle`, `message` (all
+optional) to support this — same idempotent `ALTER TABLE` pattern as
+`application_timeline` (§3) for the Postgres backend.
+
+## 13. Roadmap after this prototype
 
 1. Pick one scraping source, verify its robots.txt/ToS, implement its adapter.
 2. Replace the shared admin password with real per-staff auth.

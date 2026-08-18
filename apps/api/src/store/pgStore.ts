@@ -63,12 +63,18 @@ CREATE TABLE IF NOT EXISTS premium_leads (
   email TEXT NOT NULL,
   name TEXT,
   interest_level TEXT,
+  scholarship_id TEXT,
+  scholarship_title TEXT,
+  message TEXT,
   ts TEXT NOT NULL
 );
--- Idempotent, covers a database that was created before this column existed
+-- Idempotent, covers a database that was created before these columns existed
 -- (schema evolution without a separate migration tool at this scale — see
 -- docs/ARCHITECTURE.md §3).
 ALTER TABLE scholarships ADD COLUMN IF NOT EXISTS application_timeline TEXT NOT NULL DEFAULT '';
+ALTER TABLE premium_leads ADD COLUMN IF NOT EXISTS scholarship_id TEXT;
+ALTER TABLE premium_leads ADD COLUMN IF NOT EXISTS scholarship_title TEXT;
+ALTER TABLE premium_leads ADD COLUMN IF NOT EXISTS message TEXT;
 `;
 
 function rowToScholarship(row: QueryResultRow): Scholarship {
@@ -232,8 +238,18 @@ async function getClicks(): Promise<ApplyClickEvent[]> {
 
 async function addLead(lead: PremiumLead): Promise<void> {
   await pool.query(
-    `INSERT INTO premium_leads (id, email, name, interest_level, ts) VALUES ($1,$2,$3,$4,$5)`,
-    [lead.id, lead.email, lead.name ?? null, lead.interestLevel ?? null, lead.timestamp]
+    `INSERT INTO premium_leads (id, email, name, interest_level, scholarship_id, scholarship_title, message, ts)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [
+      lead.id,
+      lead.email,
+      lead.name ?? null,
+      lead.interestLevel ?? null,
+      lead.scholarshipId ?? null,
+      lead.scholarshipTitle ?? null,
+      lead.message ?? null,
+      lead.timestamp,
+    ]
   );
 }
 
@@ -244,6 +260,9 @@ async function getLeads(): Promise<PremiumLead[]> {
     email: row.email,
     name: row.name ?? undefined,
     interestLevel: row.interest_level ?? undefined,
+    scholarshipId: row.scholarship_id ?? undefined,
+    scholarshipTitle: row.scholarship_title ?? undefined,
+    message: row.message ?? undefined,
     timestamp: row.ts,
   }));
 }
