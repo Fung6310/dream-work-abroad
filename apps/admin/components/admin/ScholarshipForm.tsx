@@ -29,6 +29,7 @@ export interface ScholarshipFormValues {
   shortDescription: string;
   eligibilitySummary: string;
   applicationTimeline: string;
+  minWorkExperienceYears: string;
   featured: boolean;
   featuredUntil: string;
   status: ScholarshipStatus;
@@ -50,6 +51,7 @@ function toFormValues(s?: Scholarship): ScholarshipFormValues {
     shortDescription: s?.shortDescription ?? "",
     eligibilitySummary: s?.eligibilitySummary ?? "",
     applicationTimeline: s?.applicationTimeline ?? "",
+    minWorkExperienceYears: s?.minWorkExperienceYears != null ? String(s.minWorkExperienceYears) : "",
     featured: s?.featured ?? false,
     featuredUntil: s?.featuredUntil ?? "",
     status: s?.status ?? "published",
@@ -254,6 +256,19 @@ export default function ScholarshipForm({
           value={values.applicationTimeline}
           onChange={(e) => set("applicationTimeline", e.target.value)}
           placeholder="e.g. Applications open in August and close in early November; interviews run February-March, results in July"
+          className={inputClass}
+        />
+      </div>
+
+      <div>
+        <label className={labelClass}>Minimum work experience (years) — only if a verified figure is known</label>
+        <input
+          type="number"
+          min={0}
+          max={50}
+          value={values.minWorkExperienceYears}
+          onChange={(e) => set("minWorkExperienceYears", e.target.value)}
+          placeholder="Leave blank if no verified minimum is documented"
           className={inputClass}
         />
       </div>

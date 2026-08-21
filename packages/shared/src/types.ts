@@ -60,6 +60,15 @@ export interface Scholarship {
   /** General entry requirements — citizenship, academic results, etc. Not exhaustive; always verify on the official site. */
   eligibilitySummary: string;
   /**
+   * Minimum full-time work experience (in years) required, where a verified
+   * figure is actually known — e.g. Chevening (2, confirmed 2,800 hours) and
+   * Australia Awards (2, baseline — varies by country). Left undefined for
+   * scholarships where no reliable minimum is documented; undefined must
+   * never be treated as "0 years required" when filtering — see
+   * `meetsMinWorkExperience` in compare.ts.
+   */
+  minWorkExperienceYears?: number;
+  /**
    * General shape of the application process — when it typically opens/closes,
    * interview/results timing, intake. Deliberately prose, not structured dates:
    * exact dates vary year to year and per-scholarship precision isn't known
@@ -140,6 +149,7 @@ export interface ScrapedScholarshipCandidate {
   /** Scraped candidates are often missing these — admin fills them in on review. */
   eligibilitySummary?: string;
   applicationTimeline?: string;
+  minWorkExperienceYears?: number;
 }
 
 export interface ScopeInfo {

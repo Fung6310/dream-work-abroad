@@ -39,6 +39,17 @@ export function isFeaturedActive(s: Scholarship, referenceDate: Date = new Date(
   return new Date(s.featuredUntil).getTime() >= referenceDate.getTime();
 }
 
+/**
+ * Whether a scholarship's (verified, where known) minimum work-experience
+ * requirement is satisfied. `minWorkExperienceYears` is undefined for most
+ * scholarships — that means "no reliable minimum documented", not "0 years
+ * required", so it always passes rather than being excluded on missing data.
+ */
+export function meetsMinWorkExperience(s: Scholarship, years: number): boolean {
+  if (s.minWorkExperienceYears === undefined) return true;
+  return years >= s.minWorkExperienceYears;
+}
+
 export function formatDeadline(deadline: string): string {
   return new Intl.DateTimeFormat("en-MY", {
     day: "numeric",

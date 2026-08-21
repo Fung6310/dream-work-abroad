@@ -392,29 +392,35 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     deadline: "2026-11-03",
     isRecurringAnnual: true,
     officialApplicationUrl: "https://www.chevening.org/apply/",
-
     shortDescription: "The UK government's global scholarship for future leaders to pursue a one-year master's degree, fully funded.",
     eligibilitySummary: "Malaysian citizen, minimum 2 years' work experience, return to Malaysia for 2 years after the award.",
+    // Confirmed: 2 years full-time work experience (2,800 hours), verified 2026-08.
+    minWorkExperienceYears: 2,
     applicationTimeline: "Applications open in August and close by early November; shortlisted candidates are interviewed around February-March, with results announced around July for a September intake.",
     featured: true,
     featuredUntil: "2026-11-03",
   }),
   s({
     id: "commonwealth-uk",
-    title: "Commonwealth Scholarship",
+    title: "Commonwealth Shared Scholarship",
     provider: "Commonwealth Scholarship Commission (UK)",
     providerType: "international",
     scope: "international",
     destinationCountry: "United Kingdom",
-    educationLevel: ["postgraduate", "phd"],
+    // NOT the Commonwealth PhD Scholarship — that scheme is restricted to
+    // least-developed/vulnerable Commonwealth states, which Malaysia (an
+    // upper-middle-income country) does not qualify as. Malaysia IS on the
+    // confirmed eligible-country list for the Master's-level "Shared
+    // Scholarships" scheme specifically — verified 2026-08, do not re-add
+    // "phd" without re-checking the current eligible-country list.
+    educationLevel: ["postgraduate"],
     fieldOfStudy: "Development-related fields",
     fundingType: "full",
     deadline: "2026-12-16",
     isRecurringAnnual: true,
     officialApplicationUrl: "https://cscuk.fcdo.gov.uk/apply/",
-
-    shortDescription: "Fully-funded UK master's and PhD scholarships for students from Commonwealth countries, focused on development impact.",
-    eligibilitySummary: "Citizen of a Commonwealth country (incl. Malaysia), cannot afford to study in the UK without funding.",
+    shortDescription: "Fully-funded UK master's scholarships (the Shared Scholarships scheme) for students from eligible Commonwealth countries, focused on development impact. Malaysia is on the eligible-country list for this Master's scheme — the separate Commonwealth PhD Scholarship is restricted to least-developed/vulnerable states and Malaysia does not qualify for that one.",
+    eligibilitySummary: "Citizen of Malaysia (confirmed on the Commonwealth Shared Scholarships eligible-country list), cannot afford to study in the UK without funding, meets the partner university's admission requirements.",
     applicationTimeline: "Applications typically open in October and close by mid-December; shortlisting and university offers follow over the next few months, with results usually confirmed by mid-year for a September/October intake.",
     featured: false,
   }),
@@ -431,9 +437,13 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     deadline: "2027-04-30",
     isRecurringAnnual: true,
     officialApplicationUrl: "https://www.dfat.gov.au/people-to-people/australia-awards/how-to-apply-for-an-australia-awards-scholarship",
-
     shortDescription: "Fully-funded Australian government scholarship for master's study, including tuition, travel and living allowance.",
     eligibilitySummary: "Malaysian citizen, minimum 2 years' relevant work experience, meets Australian university entry requirements.",
+    // Baseline requirement is 2 years — some other countries in the program
+    // have a higher country-specific minimum (e.g. 5 years for some African
+    // countries), but no Malaysia-specific figure above the 2-year baseline
+    // was found; verified 2026-08.
+    minWorkExperienceYears: 2,
     applicationTimeline: "Applications typically open earlier in the year and close by the deadline above; shortlisting, interviews and health/security checks run over several months, with results announced later in the year ahead of the following year's intake.",
     featured: false,
   }),

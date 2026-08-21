@@ -6,6 +6,7 @@ import {
   isFeaturedActive,
   matchesFilters,
   matchesQuery,
+  meetsMinWorkExperience,
   sortByDeadline,
   sortFeaturedFirst,
 } from "./compare";
@@ -135,6 +136,22 @@ describe("matchesFilters", () => {
     const s = makeScholarship({ title: "Chevening Scholarship", scope: "international" });
     expect(matchesFilters(s, { q: "chevening", scope: ["international"] }, REF)).toBe(true);
     expect(matchesFilters(s, { q: "fulbright", scope: ["international"] }, REF)).toBe(false);
+  });
+});
+
+describe("meetsMinWorkExperience", () => {
+  it("always passes when no minimum is documented (undefined is not '0 required')", () => {
+    const s = makeScholarship({ minWorkExperienceYears: undefined });
+    expect(meetsMinWorkExperience(s, 0)).toBe(true);
+    expect(meetsMinWorkExperience(s, 10)).toBe(true);
+  });
+
+  it("requires at least the documented minimum when one is set", () => {
+    const s = makeScholarship({ minWorkExperienceYears: 2 });
+    expect(meetsMinWorkExperience(s, 0)).toBe(false);
+    expect(meetsMinWorkExperience(s, 1)).toBe(false);
+    expect(meetsMinWorkExperience(s, 2)).toBe(true);
+    expect(meetsMinWorkExperience(s, 5)).toBe(true);
   });
 });
 

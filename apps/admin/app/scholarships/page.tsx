@@ -29,7 +29,13 @@ function ScholarshipsContent() {
   async function onSubmit(values: ScholarshipFormValues) {
     setSubmitting(true);
     try {
-      const payload = { ...values, featuredUntil: values.featuredUntil || undefined };
+      const payload = {
+        ...values,
+        featuredUntil: values.featuredUntil || undefined,
+        minWorkExperienceYears: values.minWorkExperienceYears
+          ? Number(values.minWorkExperienceYears)
+          : undefined,
+      };
       if (editing === "new") {
         await adminCreateScholarship(payload);
       } else if (editing) {
