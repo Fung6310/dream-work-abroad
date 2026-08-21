@@ -34,10 +34,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <nav className="flex items-center gap-4 text-sm text-textMuted dark:text-textMuted2">
               <Link href="/" className="hover:text-primary dark:hover:text-primary2">
-                Search
+                Home
               </Link>
-              <Link href="/match" className="hover:text-primary dark:hover:text-primary2">
-                Find My Scholarships
+              <Link href="/undergraduate" className="hover:text-primary dark:hover:text-primary2">
+                Undergraduate
+              </Link>
+              <Link href="/postgraduate" className="hover:text-primary dark:hover:text-primary2">
+                Postgraduate
               </Link>
               <Link href="/premium" className="hover:text-primary dark:hover:text-primary2">
                 Premium

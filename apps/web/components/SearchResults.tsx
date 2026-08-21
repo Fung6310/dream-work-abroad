@@ -34,7 +34,18 @@ function allFalse<T extends string>(keys: T[]): Record<T, boolean> {
 // nothing in a facet applies no constraint from that facet at all (an empty
 // selection is never "match nothing"). FilterSidebar's checkbox UI doesn't
 // need to know about this — `checked` already means "selected" either way.
-export default function SearchResults({ scholarships, query }: { scholarships: Scholarship[]; query: string }) {
+export default function SearchResults({
+  scholarships,
+  query,
+  emptyLabel = "All scholarships",
+  noMatchText = "No matches yet. We currently track a curated launch catalogue — try a broader search, e.g. a country or field of study.",
+}: {
+  scholarships: Scholarship[];
+  query: string;
+  /** Heading shown when there's no text query — e.g. "All undergraduate scholarships". */
+  emptyLabel?: string;
+  noMatchText?: string;
+}) {
   const scopes = useMemo(() => Array.from(new Set(scholarships.map((s) => s.scope))) as Scope[], [scholarships]);
   const levels = useMemo(
     () => Array.from(new Set(scholarships.flatMap((s) => s.educationLevel))) as EducationLevel[],
@@ -153,7 +164,7 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
       <section>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text dark:text-text2">
-            {query ? `Results for "${query}"` : "All scholarships"}
+            {query ? `Results for "${query}"` : emptyLabel}
           </h2>
           <span className="text-sm text-textMuted dark:text-textMuted2">
             {filtered.length} scholarship{filtered.length === 1 ? "" : "s"}
@@ -162,8 +173,7 @@ export default function SearchResults({ scholarships, query }: { scholarships: S
 
         {scholarships.length === 0 ? (
           <p className="rounded-xl2 border border-dashed border-border dark:border-border2 p-8 text-center text-textMuted dark:text-textMuted2">
-            No matches yet. We currently track a curated launch catalogue — try a broader search, e.g. a country
-            or field of study.
+            {noMatchText}
           </p>
         ) : filtered.length === 0 ? (
           <div className="rounded-xl2 border border-dashed border-border dark:border-border2 p-8 text-center text-textMuted dark:text-textMuted2">

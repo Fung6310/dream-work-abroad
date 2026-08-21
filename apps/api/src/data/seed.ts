@@ -515,7 +515,10 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-04-30",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.campuschina.org",
+    // The actual online application system (create an account, submit the
+    // form) — campuschina.org is the parent portal but doesn't itself host
+    // the apply flow. Verified 2026-08.
+    officialApplicationUrl: "https://studyinchina.csc.edu.cn/#/login",
     shortDescription: "Fully-funded Chinese government scholarship covering tuition, accommodation, a stipend and medical insurance.",
     eligibilitySummary: "Non-Chinese citizen in good health, meets age/academic requirements per study level.",
     applicationTimeline: "Applications typically open in the first quarter and close by the deadline above; results are usually announced by June-July for a September intake.",
@@ -580,20 +583,27 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
   }),
   s({
     id: "nz-asean",
-    title: "New Zealand ASEAN Scholar Awards",
+    // Rebranded "Manaaki New Zealand Scholarships" — the ASEAN-region award
+    // is one track under that programme. Malaysia specifically is
+    // postgraduate-only (confirmed: NZ's 2026 allocation increase for
+    // Malaysia was explicitly framed as postgraduate scholarships; the
+    // programme offers undergraduate study to some other ASEAN/Pacific
+    // countries, but not Malaysia). Verified 2026-08 — do not re-add
+    // "undergraduate" without re-checking the current per-country terms.
+    title: "Manaaki New Zealand Scholarship (ASEAN)",
     provider: "New Zealand Ministry of Foreign Affairs and Trade",
     providerType: "international",
     scope: "international",
     destinationCountry: "New Zealand",
-    educationLevel: ["undergraduate", "postgraduate"],
+    educationLevel: ["postgraduate"],
     fieldOfStudy: "Development-related priority fields",
     fundingType: "full",
     deadline: "2027-02-28",
     isRecurringAnnual: true,
     officialApplicationUrl: "https://nzscholarships.my.site.com/Scholar/s/",
 
-    shortDescription: "Fully-funded New Zealand government scholarship for students from ASEAN countries, including Malaysia.",
-    eligibilitySummary: "Malaysian citizen, meets academic and (for postgraduate) work-experience requirements.",
+    shortDescription: "Fully-funded New Zealand government postgraduate scholarship for Malaysian students, part of the wider Manaaki New Zealand Scholarships programme for ASEAN and Pacific countries.",
+    eligibilitySummary: "Malaysian citizen, meets academic and work-experience requirements for postgraduate study in New Zealand.",
     applicationTimeline: "Applications typically open around November and close by late February; shortlisting and interviews follow over the next few months, with results announced ahead of the intake later that year.",
     featured: false,
   }),
@@ -615,25 +625,14 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     applicationTimeline: "Applications are typically submitted through the Korean Embassy or a partner university around February-March; results are usually announced mid-year for a September intake (or March the following year via the university track).",
     featured: false,
   }),
-  s({
-    id: "sg-asean",
-    title: "Singapore ASEAN Scholarship",
-    provider: "Ministry of Education, Singapore",
-    providerType: "international",
-    scope: "international",
-    destinationCountry: "Singapore",
-    educationLevel: ["undergraduate"],
-    fieldOfStudy: "Any",
-    fundingType: "full",
-    deadline: "2027-02-28",
-    isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/malaysia",
-
-    shortDescription: "Fully-funded pre-university and undergraduate scholarship for ASEAN students, including Malaysians, to study in Singapore.",
-    eligibilitySummary: "ASEAN citizen (incl. Malaysian), strong academic record, subject to a bond to work in Singapore after graduation.",
-    applicationTimeline: "Applications typically open around January and close by the deadline above, alongside your application to study in Singapore; results are usually announced by mid-year.",
-    featured: false,
-  }),
+  // REMOVED "sg-asean" (Singapore ASEAN Scholarship): re-verified 2026-08 and
+  // found to be a secondary-school/pre-university award (Secondary 1/3 or
+  // Pre-university 1, leading to GCE O-/A-Level) — it does not fund a
+  // diploma, bachelor's, master's or PhD at all, so it doesn't fit any
+  // EducationLevel this site covers and was mistagged "undergraduate".
+  // Genuinely a different category of award; do not re-add under
+  // "undergraduate" without a real Singapore university-level scholarship to
+  // replace it with.
   s({
     id: "stipendium-hungaricum",
     title: "Stipendium Hungaricum",
@@ -655,7 +654,10 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
   }),
   s({
     id: "holland-scholarship",
-    title: "Holland Scholarship",
+    // Renamed "NL Scholarship" by Nuffic in June 2023 — "Holland Scholarship"
+    // is the old brand name, still widely used/searched, so kept alongside
+    // the current name rather than dropped outright. Verified 2026-08.
+    title: "NL Scholarship (formerly Holland Scholarship)",
     provider: "Dutch Ministry of Education, Culture and Science + participating universities",
     providerType: "international",
     scope: "international",
@@ -665,9 +667,13 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2027-02-01",
     isRecurringAnnual: true,
+    // No single centralised "apply" page exists — applications go through
+    // each participating institution's own admissions process, so this
+    // Study in NL explainer (which says as much and links onward) is the
+    // most accurate single link. Verified 2026-08.
     officialApplicationUrl: "https://www.studyinnl.org/finances/nl-scholarship",
 
-    shortDescription: "A one-off partial scholarship for non-EEA students starting a bachelor's or master's degree at a participating Dutch university.",
+    shortDescription: "A one-off partial scholarship for non-EEA students starting a bachelor's or master's degree at a participating Dutch university. Applications go through your chosen institution, not a central portal.",
     eligibilitySummary: "Non-EEA citizen (incl. Malaysian), admitted to a participating Dutch university programme.",
     applicationTimeline: "Applications typically open in the preceding months and close by early February, alongside your application to the Dutch university; results are usually announced by May for a September intake.",
     featured: false,

@@ -124,22 +124,19 @@ docs/DEPLOYMENT.md for the Vercel + Render + hosted-Postgres setup. A shared
 with no build step, consumed via `transpilePackages` in both Next.js apps and
 directly via `tsx` in the API.
 
-## 7a. Eligibility matcher ("Find My Scholarships", `/match`)
+## 7a. Eligibility matchers (superseded — see §14)
 
-A client-only profile form (`components/MatchExperience.tsx`) captures
-education level, an optional field of study, preferred scope(s) and a
-funding preference, persists it to `localStorage` so it survives a repeat
-visit, and re-queries `GET /api/scholarships` with those as real filters
-(`level`, `field`, `scope`, `fundingType` — the same query params the home
-search's Scope facet uses). This only narrows on **structured** data
-the catalogue actually has. It deliberately does not attempt to filter on
-citizenship, minimum CGPA, or other fine-print criteria, since those aren't
-structured per-scholarship fields (and inventing plausible-looking numbers
-would be worse than not filtering at all) — each result still surfaces its
-`eligibilitySummary` text so the student does the final check themselves.
-Extending this to hard-filter on more criteria later means adding those as
-real structured fields on `Scholarship` first (and populating them
-accurately per scholarship), not guessing.
+Originally a single generic profile form at `/match`
+(`components/MatchExperience.tsx`) capturing education level, field, scope
+and funding preference. §14 replaced this with two education-stage-specific
+matchers (`UndergraduateMatcher`, `PostgraduateMatcher`) embedded directly on
+the `/undergraduate` and `/postgraduate` pages; `/match` and
+`MatchExperience.tsx` were removed. The underlying principle carries over
+unchanged: only narrow on **structured** data the catalogue actually has
+(`level`, `field`, `scope`, `fundingType`, and now `minWorkExperienceYears`
+— see §14). Never fabricate a per-scholarship cutoff (CGPA, exact grade
+requirement) to make a filter feel smarter than the data supports; surface
+`eligibilitySummary` instead so the student does the final check themselves.
 
 ## 8. Visual theme
 
@@ -334,3 +331,86 @@ real problems):
 
 Already done as of this doc: Postgres migration (§3), the Malaysia/International
 scope split (§3, §7a), the eligibility matcher (§7a).
+
+## 14. Undergraduate/Postgraduate split, home redesign, and eligibility corrections (2026-08)
+
+User request: stop showing the full catalogue on the home page; split it into
+a dedicated Undergraduate page (diploma + bachelor's) and Postgraduate page
+(master's + PhD), each with a qualification-based matcher; re-verify every
+scholarship is genuinely Malaysia-eligible; fix incorrect apply-button URLs.
+
+**Data model.** Added `minWorkExperienceYears?: number` to `Scholarship` (and
+`ScrapedScholarshipCandidate`) and a pure `meetsMinWorkExperience()` helper in
+`compare.ts` (tested in `compare.test.ts`). `undefined` means "no verified
+minimum documented" and always passes — never coerced to "0 required". Wired
+through `pgStore.ts` (schema + migration + mapper + insert/update),
+`routes/admin.ts` (zod schema, create + mock-scrape ingest), and
+`ScholarshipForm.tsx`. Only two scholarships carry a verified figure so far:
+Chevening (2 years, 2,800 hours) and Australia Awards (2 years, baseline).
+
+**Pages.** `/undergraduate` and `/postgraduate` each fetch their own
+education-level slice server-side (`level: ["diploma","undergraduate"]` /
+`level: ["postgraduate","phd"]`) and reuse `SearchResults`/`FilterSidebar`
+unchanged — the Malaysia/International Scope facet "just works" because it's
+already derived from the fetched data (§ on `SearchResults`'s data-driven
+facets), satisfying "each page needs a Malaysia and International filter"
+with zero new filter code. `SearchResults` gained optional `emptyLabel`/
+`noMatchText` props so each page's empty-state copy is specific
+("All undergraduate scholarships" vs "All postgraduate scholarships").
+
+**Matchers.** `UndergraduateMatcher.tsx` asks for a qualification tier — SPM
+or equivalent (O-Level/IGCSE/UEC Junior Middle 3), pre-university completed
+(STPM/A-Level/Foundation/Matriculation/AUSMAT/SAM/CPU/IB/UEC Senior Middle 3),
+or diploma completed — plus an optional free-text SPM result (advisory only,
+never a hard filter: no reliably-verified per-scholarship grade cutoffs
+exist). The key subtlety: several Malaysian government/GLC scholarships
+tagged `educationLevel:"undergraduate"` (JPA, MARA, Petronas, Khazanah-type
+awards) are explicitly built to take fresh SPM leavers straight in, bundling
+a foundation/pre-university year into the sponsorship — so the "fresh SPM
+leaver" tier maps to `["diploma","undergraduate"]`, not diploma-only, while
+the other two tiers (already past that stage) map to `["undergraduate"]`.
+`PostgraduateMatcher.tsx` asks for level (master's/PhD), bachelor's degree
+classification (advisory only, same anti-fabrication reasoning), and years of
+work experience — the one genuinely verified hard filter, applied client-side
+via `meetsMinWorkExperience()` after the server-side level/scope/field/funding
+query. `/match` and `MatchExperience.tsx` were removed (see §7a); nav updated
+to Home / Undergraduate / Postgraduate / Premium.
+
+**Home page.** Rebuilt as a landing page instead of a full listing: hero +
+search, two large Undergraduate/Postgraduate CTA cards, a "Popular right now"
+spotlight of two hand-picked (not merely "featured-flagged") scholarships —
+one recognisably famous per stage, `jpa-scholarship` and `chevening-uk` — via
+direct `getScholarship(id)` calls, and a 3-step "how it works" strip. A typed
+search query still searches the full catalogue (unchanged `SearchResults`
+behaviour) — only the default, query-less state stopped showing everything.
+`FeaturedStrip.tsx` was removed (no longer used anywhere after this change).
+
+**Eligibility re-verification (the "!!!!" requirement).** Re-checked all 16
+international scholarships plus every URL against live sources. Confirmed
+issues, fixed:
+- `commonwealth-uk`: was tagged `["postgraduate","phd"]` — Malaysia only
+  qualifies for the Master's "Shared Scholarships" scheme; the separate
+  Commonwealth PhD Scholarship is restricted to least-developed/vulnerable
+  states. Retitled, re-tagged `["postgraduate"]` only.
+- `nz-asean`: was tagged `["undergraduate","postgraduate"]` — Malaysia's
+  allocation under Manaaki New Zealand Scholarships is postgraduate-only
+  (confirmed via NZ's own 2026 allocation-increase announcement, framed
+  explicitly as postgraduate scholarships for Malaysians). Retitled to the
+  scheme's current name, re-tagged `["postgraduate"]` only.
+- `sg-asean` (Singapore ASEAN Scholarship): **removed entirely**. Re-verified
+  to be a secondary-school/pre-university award (Secondary 1/3 or
+  Pre-university 1, leading to GCE O-/A-Level) — it funds no diploma,
+  bachelor's, master's or PhD at all, so it doesn't fit any `EducationLevel`
+  this site covers and was mistagged `"undergraduate"`.
+- `csc-china`: apply URL pointed at the parent portal (campuschina.org)
+  rather than the actual application/login flow
+  (`studyinchina.csc.edu.cn/#/login`).
+- `holland-scholarship`: Nuffic renamed this "NL Scholarship" in June 2023;
+  retitled to "NL Scholarship (formerly Holland Scholarship)" and clarified
+  in the description that applications go through each institution, not a
+  central portal (confirmed no single centralised apply page exists).
+
+Everything else re-checked (CIMB, Petronas, Chevening, DAAD, MEXT, Fulbright,
+Australia Awards, MARA, Bank Negara, Yayasan UEM, Sime Darby, TNB, Erasmus
+Mundus, Türkiye Bursları, Stipendium Hungaricum, Eiffel, Swiss Excellence, KGSP)
+had accurate eligibility and a correctly deep-linked apply URL already.
