@@ -284,6 +284,37 @@ than a formal audit):
   of one more click through the detail page. The point: what a sponsor is
   actually paying for should look like more than a small badge.
 
+**Second follow-up pass** (user re-checked the live catalogue and found two
+real problems):
+
+- **Most `officialApplicationUrl`s were bare homepages, not the actual
+  application page** (`petronas.com`, `cimb.com`, etc.) — the entire value of
+  "Apply Now" is landing exactly where you can apply, not one more click of
+  guesswork. Web-searched and corrected 32 of the 34 seed scholarships to
+  their specific scholarship page or application portal (e.g. CIMB →
+  `cimb.com/en/careers/students/cimb-asean-scholarship.html`, Petronas →
+  `educationsponsorship.petronas.com.my/OAS`, Chevening →
+  `chevening.org/apply/`). Two domains turned out to be simply wrong, not
+  just imprecise — Sime Darby Foundation's real domain is
+  `yayasansimedarby.com`, not `simedarbyfoundation.com`. Where a scholarship's
+  real application system is a bare login wall with no context (e.g. JPA's
+  eSILA), linked the official information/how-to-apply page on the same
+  domain instead — still specific, just not a dead-end login form. `csc-china`
+  and `kgsp-korea` were already correctly specific and left unchanged. This
+  is seed data, not scraped — see §5's caution about scraping — so it only
+  needed correcting once, not an ongoing pipeline.
+- **The "Private" provider-type filter always returned zero results** and so
+  did "Professional" under Education level and "Living allowance only"/"Other"
+  under Funding type — dead filters left over from listing the full enum
+  regardless of what the catalogue actually contains. Fixed generally, not
+  by special-casing "private": `levels`, `providerTypes`, and `fundingTypes`
+  in `SearchResults.tsx` are now derived from the current scholarship set the
+  same way `scopes`/`countries` already were, and `FilterSidebar` hides any
+  facet section with ≤1 available value. A future scholarship published with
+  `providerType:"private"` (e.g. the pending Genting Group mock-scrape
+  candidate, once approved) will make that option reappear on its own —
+  no code change needed when the data changes.
+
 ## 13. Roadmap after this prototype
 
 1. Pick one scraping source, verify its robots.txt/ToS, implement its adapter.

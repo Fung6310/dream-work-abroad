@@ -1,25 +1,19 @@
 "use client";
 
-import {
-  EducationLevel,
-  EDUCATION_LEVELS,
-  FundingType,
-  FUNDING_TYPES,
-  ProviderType,
-  PROVIDER_TYPES,
-  Scope,
-  SCOPES,
-} from "@dreamworkabroad/shared";
+import { EducationLevel, EDUCATION_LEVELS, FundingType, FUNDING_TYPES, ProviderType, PROVIDER_TYPES, Scope, SCOPES } from "@dreamworkabroad/shared";
 
 export interface FilterSidebarProps {
   scopes: Scope[];
   selectedScopes: Record<Scope, boolean>;
   onToggleScope: (scope: Scope) => void;
-  levels: Record<EducationLevel, boolean>;
+  levels: EducationLevel[];
+  selectedLevels: Record<EducationLevel, boolean>;
   onToggleLevel: (level: EducationLevel) => void;
-  providerTypes: Record<ProviderType, boolean>;
+  providerTypes: ProviderType[];
+  selectedProviderTypes: Record<ProviderType, boolean>;
   onToggleProviderType: (providerType: ProviderType) => void;
-  fundingTypes: Record<FundingType, boolean>;
+  fundingTypes: FundingType[];
+  selectedFundingTypes: Record<FundingType, boolean>;
   onToggleFundingType: (fundingType: FundingType) => void;
   countries: string[];
   selectedCountries: Record<string, boolean>;
@@ -29,10 +23,6 @@ export interface FilterSidebarProps {
   onReset: () => void;
   activeCount: number;
 }
-
-const ALL_LEVELS = Object.values(EDUCATION_LEVELS).sort((a, b) => a.order - b.order);
-const ALL_PROVIDER_TYPES = Object.values(PROVIDER_TYPES);
-const ALL_FUNDING_TYPES = Object.values(FUNDING_TYPES);
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -57,15 +47,30 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
   );
 }
 
+// Every facet here — including Provider type and Funding type — only lists
+// values actually present in the current result set (same pattern Scope and
+// Destination already used). A checkbox for a value with zero matching
+// scholarships is a dead filter: it looks like an option but can never
+// change the results. "Private" under Provider type was exactly this after
+// every Malaysian private university got reclassified to "university" and
+// CIMB Foundation to "foundation" — nothing published carries
+// providerType:"private" anymore, so the checkbox always returned zero
+// results. Deriving from data instead of the full enum fixes that instance
+// and prevents the same dead-filter problem for any other facet/value
+// combination (e.g. "professional" under Education level, or
+// "living-allowance-only" under Funding type — currently also empty).
 export default function FilterSidebar({
   scopes,
   selectedScopes,
   onToggleScope,
   levels,
+  selectedLevels,
   onToggleLevel,
   providerTypes,
+  selectedProviderTypes,
   onToggleProviderType,
   fundingTypes,
+  selectedFundingTypes,
   onToggleFundingType,
   countries,
   selectedCountries,
@@ -103,43 +108,49 @@ export default function FilterSidebar({
         </Section>
       )}
 
-      <Section title="Education level">
-        {ALL_LEVELS.map((level) => (
-          <Checkbox
-            key={level.id}
-            checked={levels[level.id]}
-            onChange={() => onToggleLevel(level.id)}
-            label={level.label}
-          />
-        ))}
-      </Section>
+      {levels.length > 0 && (
+        <Section title="Education level">
+          {levels.map((level) => (
+            <Checkbox
+              key={level}
+              checked={selectedLevels[level]}
+              onChange={() => onToggleLevel(level)}
+              label={EDUCATION_LEVELS[level].label}
+            />
+          ))}
+        </Section>
+      )}
 
-      <Section title="Provider type">
-        {ALL_PROVIDER_TYPES.map((pt) => (
-          <Checkbox
-            key={pt.id}
-            checked={providerTypes[pt.id]}
-            onChange={() => onToggleProviderType(pt.id)}
-            label={
-              <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: pt.badgeColor }} />
-                {pt.label}
-              </span>
-            }
-          />
-        ))}
-      </Section>
+      {providerTypes.length > 1 && (
+        <Section title="Provider type">
+          {providerTypes.map((pt) => (
+            <Checkbox
+              key={pt}
+              checked={selectedProviderTypes[pt]}
+              onChange={() => onToggleProviderType(pt)}
+              label={
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: PROVIDER_TYPES[pt].badgeColor }} />
+                  {PROVIDER_TYPES[pt].label}
+                </span>
+              }
+            />
+          ))}
+        </Section>
+      )}
 
-      <Section title="Funding type">
-        {ALL_FUNDING_TYPES.map((ft) => (
-          <Checkbox
-            key={ft.id}
-            checked={fundingTypes[ft.id]}
-            onChange={() => onToggleFundingType(ft.id)}
-            label={ft.label}
-          />
-        ))}
-      </Section>
+      {fundingTypes.length > 1 && (
+        <Section title="Funding type">
+          {fundingTypes.map((ft) => (
+            <Checkbox
+              key={ft}
+              checked={selectedFundingTypes[ft]}
+              onChange={() => onToggleFundingType(ft)}
+              label={FUNDING_TYPES[ft].label}
+            />
+          ))}
+        </Section>
+      )}
 
       {countries.length > 1 && (
         <Section title="Destination">

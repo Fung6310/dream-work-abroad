@@ -36,7 +36,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-03-01",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.jpa.gov.my",
+    officialApplicationUrl: "https://www.jpa.gov.my/biasiswa-dan-tajaan",
+
     shortDescription:
       "Malaysia's flagship civil-service scholarship covering tuition and living costs for top SPM/STPM leavers, with a bond to serve the government after graduation.",
     eligibilitySummary:
@@ -57,7 +58,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "tuition-only",
     deadline: "2026-12-01",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.ptptn.gov.my",
+    officialApplicationUrl: "https://www.ptptn.gov.my/ionline/",
+
     shortDescription:
       "Malaysia's national higher-education loan scheme, covering tuition fees (and partial living costs for some programmes) at approved local institutions, repayable after graduation.",
     eligibilitySummary: "Malaysian citizen enrolled or accepted at a PTPTN-approved institution.",
@@ -76,7 +78,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-03-31",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.petronas.com",
+    officialApplicationUrl: "https://educationsponsorship.petronas.com.my/OAS",
+
     shortDescription:
       "Full sponsorship from Malaysia's national oil and gas company for high-achieving students in engineering, science and related fields, at local or overseas universities.",
     eligibilitySummary: "Malaysian citizen, strong STPM/A-Level/foundation results, competitive interview process.",
@@ -96,7 +99,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-01-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.yayasankhazanah.com.my",
+    officialApplicationUrl: "https://www.yayasankhazanah.com.my/scholarship-programmes/khazanah-global-scholarship-programme",
+
     shortDescription:
       "Highly competitive full scholarship from Malaysia's sovereign wealth fund's foundation, placing top students at leading universities worldwide.",
     eligibilitySummary: "Malaysian citizen, outstanding academic and leadership record, multi-stage selection.",
@@ -116,7 +120,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-12-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.yayasanuem.com.my",
+    officialApplicationUrl: "https://www.uem.com.my/yayasan-scholarship",
+
     shortDescription: "Full scholarship for Malaysian students pursuing engineering, built-environment and business degrees.",
     eligibilitySummary: "Malaysian citizen, strong academic record, financial need considered.",
     applicationTimeline: "Applications typically open a few months before the deadline above; shortlisted candidates are usually interviewed within 1-2 months, with results announced ahead of the new academic year.",
@@ -134,7 +139,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-02-28",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.bnm.gov.my",
+    officialApplicationUrl: "https://www.bnm.gov.my/careers/scholarships",
+
     shortDescription: "Full sponsorship from Malaysia's central bank for finance, economics and related disciplines, with a bond to serve BNM.",
     eligibilitySummary: "Malaysian citizen, excellent academic results, competitive assessment centre.",
     applicationTimeline: "Applications typically open early in the year; the process includes an online assessment and an assessment-centre/interview stage before offers are made around mid-year.",
@@ -152,7 +158,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-01-31",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.mara.gov.my",
+    officialApplicationUrl: "https://biasiswa.mara.gov.my",
+
     shortDescription: "Full scholarship placing Bumiputera students at overseas universities across a wide range of fields.",
     eligibilitySummary: "Malaysian Bumiputera citizen, strong SPM/STPM/foundation results.",
     applicationTimeline: "Applications typically open in the last quarter of the preceding year and close by the deadline above; shortlisting and interviews follow over the next few months ahead of the overseas intake.",
@@ -170,7 +177,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-11-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.simedarbyfoundation.com",
+    officialApplicationUrl: "https://yayasansimedarby.com/scholarship-information",
+
     shortDescription: "Merit- and need-based full scholarship supporting Malaysian students at local and overseas institutions.",
     eligibilitySummary: "Malaysian citizen, excellent academic record, financial need considered.",
     applicationTimeline: "Applications typically open a few months before the deadline above; shortlisting and interviews run over the following weeks, with results announced before the new academic year.",
@@ -188,7 +196,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-01-10",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.tnb.com.my",
+    officialApplicationUrl: "https://ytn.tnb.com.my/scholarships.html",
+
     shortDescription: "Full scholarship from Malaysia's national utility company for engineering and science undergraduates, with a service bond.",
     eligibilitySummary: "Malaysian citizen, strong STPM/A-Level results in relevant subjects.",
     applicationTimeline: "Applications typically open in the preceding months; shortlisted candidates go through assessments and interviews before offers are made ahead of the new intake.",
@@ -206,7 +215,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-02-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.cimb.com",
+    officialApplicationUrl: "https://www.cimb.com/en/careers/students/cimb-asean-scholarship.html",
+
     shortDescription: "Regional full scholarship from CIMB for outstanding ASEAN students in business and finance-related fields.",
     eligibilitySummary: "ASEAN citizen (including Malaysian), outstanding academic record, leadership potential.",
     applicationTimeline: "Applications typically open a few months before the deadline above; shortlisting, interviews and final selection usually take a few months, with results announced ahead of the new academic year.",
@@ -227,7 +237,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-11-30",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://university.sunway.edu.my",
+    officialApplicationUrl: "https://scholarship.sunway.edu.my/scholarship-application-process",
+
     shortDescription: "Tuition-fee discounts of up to 100% based on academic results for new Sunway University students.",
     eligibilitySummary: "New applicant to Sunway University, strong SPM/STPM/foundation/A-Level results.",
     applicationTimeline: "Assessed automatically at the point of admission based on your SPM/STPM/foundation/A-Level results, no separate scholarship application or deadline; apply for the programme itself ahead of your target intake.",
@@ -245,7 +256,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-11-30",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://university.sunway.edu.my",
+    officialApplicationUrl: "https://scholarship.sunway.edu.my/",
+
     shortDescription: "Sunway University's top full-ride scholarship for exceptional students, covering tuition and a living allowance.",
     eligibilitySummary: "Outstanding academic results plus co-curricular/leadership record, competitive interview.",
     applicationTimeline: "Requires a separate scholarship application alongside (or shortly after) your programme application; shortlisted candidates are typically interviewed before the intake you are applying for.",
@@ -263,7 +275,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-12-01",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://university.taylors.edu.my",
+    officialApplicationUrl: "https://university.taylors.edu.my/en/study/scholarships-and-financial-aid/undergraduate-scholarships.html",
+
     shortDescription: "Merit-based tuition fee waivers for new Taylor's University students, tiered by academic results.",
     eligibilitySummary: "New applicant to Taylor's University, strong academic results.",
     applicationTimeline: "Assessed automatically based on your academic results when you apply for admission, no separate scholarship deadline; apply ahead of your target intake (typically February, June or September).",
@@ -281,7 +294,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-12-20",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://newinti.edu.my",
+    officialApplicationUrl: "https://newinti.edu.my/why-inti/student-support-services/scholarships-financial-assistance/",
+
     shortDescription: "Tuition-fee scholarships for new students based on academic merit across INTI's campuses.",
     eligibilitySummary: "New applicant to INTI, minimum academic result requirements vary by programme.",
     applicationTimeline: "Assessed as part of the admissions process based on academic merit, no separate scholarship deadline; apply ahead of your target intake.",
@@ -299,7 +313,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-12-10",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.ucsiuniversity.edu.my",
+    officialApplicationUrl: "https://apps.ucsiuniversity.edu.my/scholarships/index.aspx",
+
     shortDescription: "Merit-based tuition discounts for new UCSI University undergraduates.",
     eligibilitySummary: "New applicant to UCSI, strong SPM/STPM/foundation results.",
     applicationTimeline: "Assessed automatically at the point of admission based on your academic results, no separate scholarship deadline; apply ahead of your target intake.",
@@ -317,7 +332,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-12-05",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.monash.edu.my",
+    officialApplicationUrl: "https://www.monash.edu.my/student-services/financial-assistance/scholarships-and-study-loans/merit-scholarships",
+
     shortDescription: "Tuition-fee scholarships for high-achieving students at Monash University's Malaysia campus.",
     eligibilitySummary: "New applicant, strong academic record; some awards require a separate written application.",
     applicationTimeline: "Most awards are assessed automatically at admission based on academic results; a few require a separate written application, check with Monash Malaysia's admissions office ahead of your target intake.",
@@ -335,7 +351,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-12-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.help.edu.my",
+    officialApplicationUrl: "https://university.help.edu.my/admissions-study-awards/study-awards-financial-aid/",
+
     shortDescription: "Merit and needs-based tuition fee waivers for new HELP University students.",
     eligibilitySummary: "New applicant to HELP University, academic and/or financial-need criteria.",
     applicationTimeline: "Assessed as part of the admissions process based on academic results and/or financial need, no separate scholarship deadline; apply ahead of your target intake.",
@@ -353,7 +370,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2026-11-20",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.mmu.edu.my",
+    officialApplicationUrl: "https://www.mmu.edu.my/mmu-scholarship/",
+
     shortDescription: "Tuition-fee scholarship for top-performing new MMU undergraduates.",
     eligibilitySummary: "New applicant to MMU, excellent SPM/STPM/foundation results.",
     applicationTimeline: "Assessed automatically at the point of admission based on your academic results, no separate scholarship deadline; apply ahead of your target intake.",
@@ -373,7 +391,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-11-03",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.chevening.org",
+    officialApplicationUrl: "https://www.chevening.org/apply/",
+
     shortDescription: "The UK government's global scholarship for future leaders to pursue a one-year master's degree, fully funded.",
     eligibilitySummary: "Malaysian citizen, minimum 2 years' work experience, return to Malaysia for 2 years after the award.",
     applicationTimeline: "Applications open in August and close by early November; shortlisted candidates are interviewed around February-March, with results announced around July for a September intake.",
@@ -392,7 +411,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-12-16",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://cscuk.fcdo.gov.uk",
+    officialApplicationUrl: "https://cscuk.fcdo.gov.uk/apply/",
+
     shortDescription: "Fully-funded UK master's and PhD scholarships for students from Commonwealth countries, focused on development impact.",
     eligibilitySummary: "Citizen of a Commonwealth country (incl. Malaysia), cannot afford to study in the UK without funding.",
     applicationTimeline: "Applications typically open in October and close by mid-December; shortlisting and university offers follow over the next few months, with results usually confirmed by mid-year for a September/October intake.",
@@ -410,7 +430,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-04-30",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.australiaawardsmalaysia.org",
+    officialApplicationUrl: "https://www.dfat.gov.au/people-to-people/australia-awards/how-to-apply-for-an-australia-awards-scholarship",
+
     shortDescription: "Fully-funded Australian government scholarship for master's study, including tuition, travel and living allowance.",
     eligibilitySummary: "Malaysian citizen, minimum 2 years' relevant work experience, meets Australian university entry requirements.",
     applicationTimeline: "Applications typically open earlier in the year and close by the deadline above; shortlisting, interviews and health/security checks run over several months, with results announced later in the year ahead of the following year's intake.",
@@ -428,7 +449,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-05-31",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.studyinjapan.go.jp",
+    officialApplicationUrl: "https://www.my.emb-japan.go.jp/itpr_en/scholarship.html",
+
     shortDescription: "Japanese government scholarship covering tuition, a monthly stipend and airfare, applied for via the Japanese Embassy in Malaysia.",
     eligibilitySummary: "Malaysian citizen, meets age/academic requirements per study level, passes embassy screening and exams.",
     applicationTimeline: "Applications are usually submitted through the Japanese Embassy around April-June; shortlisted candidates sit a written exam and interview, with results announced a few months later ahead of an April or October intake the following year.",
@@ -445,7 +467,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fieldOfStudy: "Varies by programme",
     fundingType: "full",
     deadline: "2026-10-15",
-    officialApplicationUrl: "https://www.daad.de",
+    officialApplicationUrl: "https://www.daad.de/en/studying-in-germany/scholarships/daad-scholarships/",
+
     shortDescription: "Germany's national scholarship agency funds a wide range of master's and PhD programmes; deadlines vary significantly by programme, this listing reflects a common intake window.",
     eligibilitySummary: "Bachelor's degree (for master's programmes) or equivalent, programme-specific requirements — check DAAD's database for the exact deadline.",
     applicationTimeline: "Timeline varies significantly by individual DAAD programme, most open applications 6-12 months before the intake they fund; check the specific programme's own page for its exact cycle.",
@@ -463,7 +486,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-01-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://erasmus-plus.ec.europa.eu",
+    officialApplicationUrl: "https://erasmus-plus.ec.europa.eu/opportunities/individuals/students/erasmus-mundus-joint-masters",
+
     shortDescription: "Fully-funded joint master's degree studied across two or more European universities, including travel and installation costs.",
     eligibilitySummary: "Bachelor's degree in a relevant field; each joint-master consortium sets its own specific requirements.",
     applicationTimeline: "Applications typically open in autumn and close by mid-January; selection results are usually announced by April-May for a September intake.",
@@ -499,7 +523,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-02-20",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.turkiyeburslari.gov.tr",
+    officialApplicationUrl: "https://www.turkiyeburslari.gov.tr/applysteps",
+
     shortDescription: "Fully-funded Turkish government scholarship including tuition, accommodation, monthly stipend, Turkish-language course and health insurance.",
     eligibilitySummary: "Meets minimum academic score thresholds per study level; no age limit for PhD, age limits apply for undergraduate/postgraduate.",
     applicationTimeline: "Applications typically open in January and close by late February; shortlisting and interviews (in person or online) run over the following months, with results announced around July for a September/October intake.",
@@ -517,7 +542,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-05-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.macee.org.my",
+    officialApplicationUrl: "https://www.macee.org.my/fulbright-programs/",
+
     shortDescription: "The US government's flagship exchange scholarship for graduate study or research at a US university, fully funded.",
     eligibilitySummary: "Malaysian citizen, bachelor's degree, competitive English proficiency and standardised test scores.",
     applicationTimeline: "Applications typically open earlier in the year and close by mid-May; shortlisting, interviews and a national selection round follow over several months, with results confirmed roughly 9-12 months before the following year's intake.",
@@ -535,7 +561,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-11-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.sbfi.admin.ch",
+    officialApplicationUrl: "https://www.go.eskas.ch/",
+
     shortDescription: "Fully-funded Swiss government scholarship for postgraduate research and doctoral study at Swiss universities.",
     eligibilitySummary: "Master's degree (for PhD track) or equivalent, applied for through the Swiss Embassy in the applicant's home country.",
     applicationTimeline: "Applications are submitted through the Swiss Embassy and typically close by mid-November; results are usually announced by March-April for a September intake the following year.",
@@ -553,7 +580,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-02-28",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.mfat.govt.nz",
+    officialApplicationUrl: "https://nzscholarships.my.site.com/Scholar/s/",
+
     shortDescription: "Fully-funded New Zealand government scholarship for students from ASEAN countries, including Malaysia.",
     eligibilitySummary: "Malaysian citizen, meets academic and (for postgraduate) work-experience requirements.",
     applicationTimeline: "Applications typically open around November and close by late February; shortlisting and interviews follow over the next few months, with results announced ahead of the intake later that year.",
@@ -589,7 +617,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-02-28",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.moe.gov.sg",
+    officialApplicationUrl: "https://www.moe.gov.sg/financial-matters/awards-scholarships/asean-scholarship/malaysia",
+
     shortDescription: "Fully-funded pre-university and undergraduate scholarship for ASEAN students, including Malaysians, to study in Singapore.",
     eligibilitySummary: "ASEAN citizen (incl. Malaysian), strong academic record, subject to a bond to work in Singapore after graduation.",
     applicationTimeline: "Applications typically open around January and close by the deadline above, alongside your application to study in Singapore; results are usually announced by mid-year.",
@@ -607,7 +636,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2027-01-15",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://stipendiumhungaricum.hu",
+    officialApplicationUrl: "https://apply.stipendiumhungaricum.hu/",
+
     shortDescription: "Fully-funded Hungarian government scholarship covering tuition, accommodation and a monthly stipend.",
     eligibilitySummary: "Meets academic entry requirements per programme; nominated through the Malaysian government partner channel or direct application.",
     applicationTimeline: "Applications typically open in November and close by mid-January; shortlisting and university admission decisions follow over the next few months, with results announced by June for a September intake.",
@@ -625,7 +655,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "partial",
     deadline: "2027-02-01",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.studyinnl.org",
+    officialApplicationUrl: "https://www.studyinnl.org/finances/nl-scholarship",
+
     shortDescription: "A one-off partial scholarship for non-EEA students starting a bachelor's or master's degree at a participating Dutch university.",
     eligibilitySummary: "Non-EEA citizen (incl. Malaysian), admitted to a participating Dutch university programme.",
     applicationTimeline: "Applications typically open in the preceding months and close by early February, alongside your application to the Dutch university; results are usually announced by May for a September intake.",
@@ -643,7 +674,8 @@ export const SEED_SCHOLARSHIPS: Scholarship[] = [
     fundingType: "full",
     deadline: "2026-12-05",
     isRecurringAnnual: true,
-    officialApplicationUrl: "https://www.campusfrance.org",
+    officialApplicationUrl: "https://www.campusfrance.org/en/france-excellence-eiffel-scholarship-program",
+
     shortDescription: "Fully-funded French government scholarship for master's and PhD study, nominated by the applicant's chosen French institution.",
     eligibilitySummary: "Non-French citizen under 30 (master's) or 35 (PhD) at time of application, nominated by a French institution.",
     applicationTimeline: "Your chosen French institution nominates candidates; applications typically close in early December, with results announced around March-April for a September intake.",
