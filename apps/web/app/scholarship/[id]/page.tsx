@@ -11,6 +11,7 @@ import ProviderTypeBadge from "@/components/ProviderTypeBadge";
 import RelatedScholarships from "@/components/RelatedScholarships";
 import ScopeBadge from "@/components/ScopeBadge";
 import SubjectsSponsored from "@/components/SubjectsSponsored";
+import TravelEssentialsRail from "@/components/TravelEssentialsRail";
 import { searchScholarships, getScholarship } from "@/lib/api";
 import { isFeaturedActive, Scholarship } from "@dreamworkabroad/shared";
 
@@ -123,6 +124,8 @@ export default async function ScholarshipPage({ params }: { params: { id: string
           General pattern only — always confirm exact dates on the official application page before you plan around them.
         </p>
       </div>
+
+      <TravelEssentialsRail />
 
       <RelatedScholarships scholarships={related} />
 

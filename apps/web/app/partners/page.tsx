@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const BENEFITS = [
   { title: "Top placement", body: "Your listing appears first in relevant searches, with a distinct Featured badge." },
   { title: "Real engagement data", body: "Every Apply click is tracked — we can show you how many students clicked through." },
-  { title: "Simple to start", body: "No ad platform, no self-serve dashboard yet — just tell us what you need below." },
+  { title: "Simple to start", body: "No ad platform to set up — a short conversation and an invoice, that's it." },
 ];
 
 export default function PartnersPage() {
@@ -34,6 +34,15 @@ export default function PartnersPage() {
             <p className="mt-1 text-sm text-textMuted dark:text-textMuted2">{b.body}</p>
           </div>
         ))}
+      </div>
+
+      <div className="rounded-xl2 border-2 border-primary/40 bg-primaryLight/10 dark:border-primary2/40 dark:bg-primaryLight2/10 p-5 text-center">
+        <p className="text-sm font-medium text-textMuted dark:text-textMuted2">Featured placement, from</p>
+        <p className="mt-1 text-3xl font-bold text-text dark:text-text2">RM 200/month</p>
+        <p className="mt-1 text-sm text-textMuted dark:text-textMuted2">
+          Cheaper on a quarterly commitment. Exact rate depends on how many relevant searches your programme
+          matches — tell us below and we&apos;ll confirm a number within a day.
+        </p>
       </div>
 
       <PartnerInquiryForm />
