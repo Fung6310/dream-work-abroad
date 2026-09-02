@@ -1,5 +1,7 @@
 # DreamWorkAbroad — Scholarships for Malaysian Students, in One Place
 
+[![CI](https://github.com/Fung6310/dream-work-abroad/actions/workflows/ci.yml/badge.svg)](https://github.com/Fung6310/dream-work-abroad/actions/workflows/ci.yml)
+
 Search once, compare government, GLC, university, foundation and
 international scholarships open to Malaysian students — education level,
 funding type, destination and deadline at a glance — and apply directly on
