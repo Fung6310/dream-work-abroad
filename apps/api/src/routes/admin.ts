@@ -56,7 +56,16 @@ router.post("/admin/login", (req, res) => {
   }
   res.cookie(COOKIE_NAME, expectedToken(), {
     httpOnly: true,
-    sameSite: "lax",
+    // apps/admin and this API are on different domains in every deployed
+    // environment (Vercel vs Render) — a genuinely cross-site relationship,
+    // not just cross-origin. SameSite=Lax is only sent on top-level
+    // navigations, never on the fetch()/XHR calls apps/admin/lib/api.ts
+    // makes with credentials:"include", so every admin request beyond the
+    // login response itself would silently lose the cookie. SameSite=None
+    // requires Secure, which is only true (HTTPS) once deployed — falls
+    // back to Lax for local dev, where web/admin/api share "localhost" as
+    // the same site regardless of port, so Lax still works there.
+    sameSite: IS_PRODUCTION ? "none" : "lax",
     secure: IS_PRODUCTION,
     maxAge: 1000 * 60 * 60 * 8,
   });
@@ -64,7 +73,11 @@ router.post("/admin/login", (req, res) => {
 });
 
 router.post("/admin/logout", (req, res) => {
-  res.clearCookie(COOKIE_NAME);
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    sameSite: IS_PRODUCTION ? "none" : "lax",
+    secure: IS_PRODUCTION,
+  });
   res.json({ ok: true });
 });
 
