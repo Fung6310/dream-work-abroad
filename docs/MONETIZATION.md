@@ -78,3 +78,36 @@ To turn this into real billing later:
 5. Gate the actual premium features (deadline alert emails, saved searches)
    behind subscription status once they're built — neither exists yet in this
    codebase.
+
+## 4. Study-abroad essentials referral rail
+
+Every scholarship page currently sends 100% of "Apply" intent straight to the
+official provider's site with nothing captured on the way. Separately from
+the scholarship itself, most recipients also end up needing the same handful
+of adjacent services — insurance, sending money, an English test, somewhere
+to live — regardless of which scholarship they won. This is the same split
+IDP Malaysia runs: the core directory/counselling stays free and untouched,
+and referral income comes from clearly-separate services bolted on beside it.
+
+**What's built now**: `apps/web/components/TravelEssentialsRail.tsx`, shown
+on every scholarship detail page. It links out to four categories —
+insurance, money transfer, IELTS booking, accommodation — using each
+provider's plain homepage URL by default, so it's useful (and honest) even
+before any affiliate account exists.
+
+**To start earning from it**, sign up for one or more of these (each needs an
+account only you can create):
+
+- Insurance: [SafetyWing](https://safetywing.com/) affiliate program
+- Money transfer: [Wise](https://wise.com/) affiliate program
+- IELTS: [British Council](https://www.britishcouncil.org/) or another test
+  provider's referral/partner program
+- Accommodation: [HousingAnywhere](https://www.housinganywhere.com/) or
+  [Amber](https://amberstudent.com/) affiliate program
+
+Once approved, set the matching env var in `apps/web/.env.local`
+(`NEXT_PUBLIC_AFFILIATE_INSURANCE_URL`, `NEXT_PUBLIC_AFFILIATE_MONEY_TRANSFER_URL`,
+`NEXT_PUBLIC_AFFILIATE_IELTS_URL`, `NEXT_PUBLIC_AFFILIATE_ACCOMMODATION_URL`)
+to your tracked referral link — the component picks it up automatically, no
+code change needed. Leave any of them unset and that card just keeps linking
+to the plain homepage.
