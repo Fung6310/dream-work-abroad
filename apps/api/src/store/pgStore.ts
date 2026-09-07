@@ -20,6 +20,18 @@ export const pool = new Pool({
   // cert that isn't in Node's default trust store for this connection mode —
   // this is their documented standard setup, not a general security bypass.
   ssl: connectionString && !connectionString.includes("localhost") ? { rejectUnauthorized: false } : undefined,
+  // node-pg's default is 0 — wait forever for a connection. If the database
+  // is temporarily unreachable (e.g. a paused free-tier Supabase project),
+  // that turns into an unbounded hang: init() below never resolves or
+  // rejects, server.ts's main() never reaches app.listen(), and the process
+  // sits there accepting TCP connections but never answering a single HTTP
+  // request — indistinguishable from "still cold-starting" from the outside.
+  // Bounding it here means a connection failure surfaces as a real rejected
+  // promise, which main()'s existing .catch() logs and exits on — and on a
+  // host that restarts a crashed process (Render's default), that turns one
+  // infinite hang into a retry loop that self-heals once the database comes
+  // back, instead of a service stuck dead until someone manually redeploys.
+  connectionTimeoutMillis: 10_000,
 });
 
 const SCHEMA_SQL = `
