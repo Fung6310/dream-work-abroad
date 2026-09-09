@@ -1,12 +1,33 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
+const TITLE = "DreamWorkAbroad — Scholarships for Malaysian Students, in One Place";
+const DESCRIPTION =
+  "Search and compare government, university, foundation and international scholarships open to Malaysian students — funding type, deadline and eligibility at a glance.";
+
 export const metadata: Metadata = {
-  title: "DreamWorkAbroad — Scholarships for Malaysian Students, in One Place",
-  description:
-    "Search and compare government, university, foundation and international scholarships open to Malaysian students — funding type, deadline and eligibility at a glance.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  // Open Graph/Twitter card — no image yet (needs real brand artwork, not a
+  // placeholder), so this covers link-preview title/description only for
+  // now; add `images` here once one exists.
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    siteName: "DreamWorkAbroad",
+    locale: "en_MY",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 const ADSENSE_PUBLISHER_ID = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
