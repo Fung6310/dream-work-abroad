@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CountrySpotlight from "@/components/CountrySpotlight";
 import FaqSection from "@/components/FaqSection";
 import FeaturedScholarshipCard from "@/components/FeaturedScholarshipCard";
 import SearchBar from "@/components/SearchBar";
@@ -36,15 +37,23 @@ export default async function HomePage({
     );
   }
 
-  const [{ count: totalCount }, spotlightUndergrad, spotlightPostgrad] = await Promise.all([
-    searchScholarships({}),
-    getScholarship(SPOTLIGHT_UNDERGRAD_ID),
-    getScholarship(SPOTLIGHT_POSTGRAD_ID),
-  ]);
+  const [{ count: totalCount, scholarships: allScholarships }, spotlightUndergrad, spotlightPostgrad] =
+    await Promise.all([
+      searchScholarships({}),
+      getScholarship(SPOTLIGHT_UNDERGRAD_ID),
+      getScholarship(SPOTLIGHT_POSTGRAD_ID),
+    ]);
 
   return (
     <div className="flex flex-col gap-14">
-      <section className="flex flex-col items-center gap-5 py-8 text-center">
+      <section className="relative flex flex-col items-center gap-5 overflow-hidden rounded-xl2 py-12 text-center">
+        {/* Decorative only — a soft radial glow behind the hero, not a
+            content element, so it's a plain aria-hidden div rather than an
+            <img>/svg that would need alt text. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,theme(colors.primaryLight/25%),transparent)] dark:bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,theme(colors.primaryLight2/40%),transparent)]"
+        />
         <span className="rounded-full border border-primary/40 px-3 py-1 text-xs font-medium text-primary dark:border-primary2/40 dark:text-primary2">
           🇲🇾 Built for Malaysian students
         </span>
@@ -61,7 +70,7 @@ export default async function HomePage({
             <a
               key={sug}
               href={`/?q=${encodeURIComponent(sug)}`}
-              className="rounded-full border border-border dark:border-border2 px-3 py-1 text-xs text-textMuted dark:text-textMuted2 hover:border-primary hover:text-primary dark:hover:border-primary2 dark:hover:text-primary2"
+              className="rounded-full border border-border dark:border-border2 px-3 py-1 text-xs text-textMuted transition-colors dark:text-textMuted2 hover:border-primary hover:text-primary dark:hover:border-primary2 dark:hover:text-primary2"
             >
               {sug}
             </a>
@@ -72,9 +81,9 @@ export default async function HomePage({
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/undergraduate"
-          className="group flex flex-col gap-2 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-6 transition-colors hover:border-primary dark:hover:border-primary2"
+          className="group flex flex-col gap-2 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg dark:hover:border-primary2"
         >
-          <span className="text-3xl">🎓</span>
+          <span className="text-3xl transition-transform duration-200 group-hover:scale-110">🎓</span>
           <h2 className="text-lg font-semibold text-text dark:text-text2 group-hover:text-primary dark:group-hover:text-primary2">
             Undergraduate scholarships
           </h2>
@@ -85,9 +94,9 @@ export default async function HomePage({
         </Link>
         <Link
           href="/postgraduate"
-          className="group flex flex-col gap-2 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-6 transition-colors hover:border-primary dark:hover:border-primary2"
+          className="group flex flex-col gap-2 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg dark:hover:border-primary2"
         >
-          <span className="text-3xl">🌍</span>
+          <span className="text-3xl transition-transform duration-200 group-hover:scale-110">🌍</span>
           <h2 className="text-lg font-semibold text-text dark:text-text2 group-hover:text-primary dark:group-hover:text-primary2">
             Postgraduate scholarships
           </h2>
@@ -97,6 +106,8 @@ export default async function HomePage({
           <span className="mt-2 text-sm font-medium text-primary dark:text-primary2">Browse postgraduate →</span>
         </Link>
       </section>
+
+      <CountrySpotlight scholarships={allScholarships} />
 
       <section>
         <div className="mb-4 flex items-baseline justify-between">

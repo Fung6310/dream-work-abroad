@@ -17,7 +17,7 @@ import { goHref } from "@/lib/api";
 // be one big <Link> like ScholarshipCard — they're siblings, not nested.
 export default function FeaturedScholarshipCard({ scholarship }: { scholarship: Scholarship }) {
   return (
-    <div className="relative flex flex-col gap-3 overflow-hidden rounded-xl2 border-2 border-accent/50 bg-gradient-to-br from-accentLight/40 to-surface dark:from-accentLight2/40 dark:to-surface2 dark:border-accent2/50 p-5 shadow-sm">
+    <div className="relative flex flex-col gap-3 overflow-hidden rounded-xl2 border-2 border-accent/50 bg-gradient-to-br from-accentLight/40 to-surface dark:from-accentLight2/40 dark:to-surface2 dark:border-accent2/50 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-xl dark:hover:border-accent2">
       <span className="absolute right-0 top-0 rounded-bl-xl2 bg-accent dark:bg-accent2 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white dark:text-bg2">
         ✨ Featured
       </span>

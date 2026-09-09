@@ -11,7 +11,7 @@ export default function ScholarshipCard({ scholarship }: { scholarship: Scholars
   return (
     <Link
       href={`/scholarship/${scholarship.id}`}
-      className="flex flex-col gap-3 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-4 hover:border-primary dark:hover:border-primary2 transition-colors"
+      className="flex flex-col gap-3 rounded-xl2 border border-border dark:border-border2 bg-surface dark:bg-surface2 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg dark:hover:border-primary2"
     >
       <div className="flex flex-wrap items-center gap-1.5">
         {isFeaturedActive(scholarship) && <FeaturedBadge />}
