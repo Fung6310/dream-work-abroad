@@ -24,6 +24,29 @@ a {
   @apply bg-primaryLight dark:bg-primaryLight2;
 }
 
+/* One step of the quiz-style matchers (UndergraduateMatcher/
+   PostgraduateMatcher) fading/sliding in on mount — each step is a fresh
+   React mount (keyed by step index), so this runs automatically on every
+   step change without any JS-driven transition timing. */
+@keyframes quiz-step-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.animate-quiz-step {
+  animation: quiz-step-in 0.25s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-quiz-step {
+    animation: none;
+  }
+}
+
 /* Chart-only token set (dataviz skill's validated categorical palette) — kept
    identical in apps/admin/app/globals.css. Not used on the public site today
    (no charts here) but defined once so both apps share the same source. */
