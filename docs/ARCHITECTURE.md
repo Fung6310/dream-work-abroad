@@ -348,15 +348,11 @@ through `pgStore.ts` (schema + migration + mapper + insert/update),
 `ScholarshipForm.tsx`. Only two scholarships carry a verified figure so far:
 Chevening (2 years, 2,800 hours) and Australia Awards (2 years, baseline).
 
-**Pages.** `/undergraduate` and `/postgraduate` each fetch their own
-education-level slice server-side (`level: ["diploma","undergraduate"]` /
-`level: ["postgraduate","phd"]`) and reuse `SearchResults`/`FilterSidebar`
-unchanged — the Malaysia/International Scope facet "just works" because it's
-already derived from the fetched data (§ on `SearchResults`'s data-driven
-facets), satisfying "each page needs a Malaysia and International filter"
-with zero new filter code. `SearchResults` gained optional `emptyLabel`/
-`noMatchText` props so each page's empty-state copy is specific
-("All undergraduate scholarships" vs "All postgraduate scholarships").
+**Pages (superseded 2026-09 — see below).** `/undergraduate` and
+`/postgraduate` originally each fetched their own education-level slice
+server-side and reused `SearchResults`/`FilterSidebar` inline below the
+matcher form. Replaced by the filter/results split described after the
+Matchers paragraph.
 
 **Matchers.** `UndergraduateMatcher.tsx` asks for a qualification tier — SPM
 or equivalent (O-Level/IGCSE/UEC Junior Middle 3), pre-university completed
@@ -371,10 +367,28 @@ leaver" tier maps to `["diploma","undergraduate"]`, not diploma-only, while
 the other two tiers (already past that stage) map to `["undergraduate"]`.
 `PostgraduateMatcher.tsx` asks for level (master's/PhD), bachelor's degree
 classification (advisory only, same anti-fabrication reasoning), and years of
-work experience — the one genuinely verified hard filter, applied client-side
-via `meetsMinWorkExperience()` after the server-side level/scope/field/funding
-query. `/match` and `MatchExperience.tsx` were removed (see §7a); nav updated
-to Home / Undergraduate / Postgraduate / Premium.
+work experience — the one genuinely verified hard filter, applied server-side
+after the level/scope/field query (moved from client-side, see below).
+`/match` and `MatchExperience.tsx` were removed (see §7a); nav updated to
+Home / Undergraduate / Postgraduate / Premium.
+
+**Filter/results split (2026-09 update).** `/undergraduate` and
+`/postgraduate` are now filter-only — no results grid on the same page.
+Submitting a matcher builds a URL from its inputs
+(`/undergraduate/results?tier=spm&level=diploma&level=undergraduate&scope=…&field=…`)
+and navigates there; the results page fetches server-side from that URL and
+renders only the matched list, no filter UI of its own. Direct request from
+the user. This also happens to fix the ux-ui-audit finding in §12 that
+matcher results lived in client component state with no URL — not
+shareable, not bookmarkable, lost on browser back — by construction, not as
+a separate effort. Field of study changed from free text to a dropdown
+(`apps/web/lib/fieldsOfStudy.ts`, ~40 common university disciplines,
+matched against the catalogue's free-text field via the same substring
+check as before — most values return 0 results today simply because the
+34-scholarship seed doesn't cover every discipline yet, which is honest,
+not broken). "Funding preference" was removed from both matcher forms per
+explicit request; funding type is still visible on every result card, just
+no longer a search input.
 
 **Home page.** Rebuilt as a landing page instead of a full listing: hero +
 search, two large Undergraduate/Postgraduate CTA cards, a "Popular right now"
@@ -414,3 +428,48 @@ Everything else re-checked (CIMB, Petronas, Chevening, DAAD, MEXT, Fulbright,
 Australia Awards, MARA, Bank Negara, Yayasan UEM, Sime Darby, TNB, Erasmus
 Mundus, Türkiye Bursları, Stipendium Hungaricum, Eiffel, Swiss Excellence, KGSP)
 had accurate eligibility and a correctly deep-linked apply URL already.
+
+## 15. Deployment topology and the region-mismatch latency problem (2026-09)
+
+Each of the three services was provisioned independently, at different
+points, without cross-referencing the others' regions:
+
+- **Web/Admin (Vercel)**: serverless functions execute in `iad1` (Virginia,
+  US East) — Vercel's default, never explicitly chosen.
+- **API (Render)**: `gcp-us-west1` (Oregon, US) — Render's default for the
+  Blueprint deploy in docs/DEPLOYMENT.md; no region was specified.
+- **Database (Supabase)**: `ap-southeast-1` (Singapore) — chosen
+  deliberately, since Malaysia is the target audience.
+
+Result: a page load for a user in Malaysia routes through Virginia (the
+Vercel function) and Oregon (the API) before ever reaching the Singapore
+database, then back the same way — multiple unnecessary cross-continental
+hops on every single request. Confirmed via response headers
+(`X-Vercel-Id: sin1::iad1::…`, and DNS resolving
+`dreamworkabroad-api.onrender.com` to `gcp-us-west1-1.origin.onrender.com`)
+and measured directly: a cold request to the public site took 33.75s
+end-to-end (Render's free-tier 15-minute-inactivity spin-down, same
+mechanism as the incident in §11); a warm one still paid ~230ms just for
+the Render round-trip before the database was even queried.
+
+**Fixed now:** `apps/web/lib/api.ts`'s `searchScholarships()` and
+`getScholarship()` were `cache: "no-store"` — every page view, even from
+the same visitor seconds apart, paid the full multi-region round-trip for
+data that barely changes minute-to-minute. Switched to
+`next: { revalidate: 60 }`. Trade-off: a newly-admin-approved scholarship
+can take up to 60s to appear publicly, which is fine for a review queue
+that isn't time-critical — deadline data and apply-click logging don't go
+through this cached path.
+
+**Not fixed yet, needs a deliberate migration:** moving the Render API to
+`ap-southeast` (matching Supabase) and checking whether Vercel's function
+region can be pinned closer too. Both are provider-side settings on
+already-live services — Render specifically requires recreating the service
+to change region, not just reconfiguring it — so this is intentionally left
+as a follow-up rather than done inline with the caching fix above.
+
+**Also still true:** the free-tier 15-minute spin-down on Render (§11) is
+unrelated to the region mismatch but compounds it — the first request after
+any idle period pays both a ~30-60s cold start *and* the full cross-region
+round-trip. Either upgrading to a paid Render instance or accepting
+occasional cold starts remains an open decision, not addressed here.

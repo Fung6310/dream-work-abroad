@@ -27,8 +27,16 @@ export async function searchScholarships(
   appendAll(qs, "fundingType", params.fundingType);
   if (params.field) qs.set("field", params.field);
   if (params.featuredOnly) qs.set("featuredOnly", "true");
+  // Was cache: "no-store" — every page view paid the full round-trip to the
+  // API (itself a multi-region hop away, see docs/ARCHITECTURE.md §15) for
+  // data that barely changes second-to-second. A short revalidation window
+  // means only the first visitor per window pays that cost; everyone else
+  // gets an instant cached response. Trade-off: a newly-approved scholarship
+  // can take up to this long to appear publicly — acceptable for a review
+  // queue that isn't time-critical, unlike the tradeoffs would be for e.g.
+  // deadline or apply-click data (neither of which goes through this path).
   const res = await fetch(`${API_BASE}/api/scholarships?${qs.toString()}`, {
-    cache: "no-store",
+    next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error("Search failed");
   const data = await res.json();
@@ -36,7 +44,7 @@ export async function searchScholarships(
 }
 
 export async function getScholarship(id: string): Promise<Scholarship | null> {
-  const res = await fetch(`${API_BASE}/api/scholarships/${id}`, { cache: "no-store" });
+  const res = await fetch(`${API_BASE}/api/scholarships/${id}`, { next: { revalidate: 60 } });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("Failed to load scholarship");
   return res.json();
