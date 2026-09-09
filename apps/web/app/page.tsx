@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FaqSection from "@/components/FaqSection";
 import FeaturedScholarshipCard from "@/components/FeaturedScholarshipCard";
 import SearchBar from "@/components/SearchBar";
 import SearchResults from "@/components/SearchResults";
@@ -145,6 +146,8 @@ export default async function HomePage({
           </p>
         </div>
       </section>
+
+      <FaqSection />
     </div>
   );
 }
